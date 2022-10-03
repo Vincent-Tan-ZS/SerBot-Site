@@ -1,21 +1,48 @@
-import {Box, Pagination, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Box, IconButton, Pagination, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
-import MainContainer from "../components/MainContainer";
 import TextInput from "../components/TextInput";
+import MainSnackbar from "../components/MainSnackbar";
+import AppBody from "../components/AppBody";
 
-const CommandsTableContainer = styled(TableContainer)`
-	// height: 80vh;
+const CommandsTableContainer = styled(TableContainer)(({ theme }) => `
+	.MuiTableCell-root, {
+		color: white;
+	}
+
+	.MuiIconButton-root {
+		color: white;
+		margin-top: 0;
+
+		&:hover {
+			color: ${theme.palette.primary.main};
+		}
+	}
 
 	.MuiTableHead-root {
 		.MuiTableCell-root {
 			background-color: black;
+			font-weight: bolder;
 		}
 	}
 
-	.MuiTableCell-root {
-		color: white;
+	.MuiTableBody-root {
+		.MuiTableRow-root {
+			&:hover {
+				background-color: #323232;
+
+				.MuiTableCell-root {
+
+					&, .MuiTypography-root {
+						font-weight: bolder;
+						font-size: 12px;
+						color: ${theme.palette.primary.main};
+					}
+				}
+			}
+		}
 	}
-`;
+`);
 
 const HeaderBox = styled(Box)`
 	display: flex;
@@ -55,6 +82,11 @@ function Commands(props) {
 	const [curPage, setCurPage] = React.useState(1);
 	const [numberOfPages, setNumberOfPages] = React.useState(1);
 	const [pageList, setPageList] = React.useState([]);
+
+	// Alert States
+	const [alertOpen, setOpenAlert] = React.useState(false);
+	const [severity, setSeverity] = React.useState("warning");
+	const [alertMessage, setAlertMessage] = React.useState("");
 
 	React.useEffect(() => {
 		let _list = list.map(li => {
@@ -111,42 +143,91 @@ function Commands(props) {
 		setFilterText(e.target.value);
 	}
 
+	const OnAlertClosed = () => {
+		setOpenAlert(false);
+	}
+
+	const OnCopyClicked = (list) => () => {
+		let _msg = "";
+		let _severity = "warning";
+
+		try
+		{
+			navigator.clipboard.writeText(list);
+			_msg = "Copied to Clipboard";
+			_severity = "info";
+		}
+		catch (e)
+		{
+			_msg = "Unable to Copy to Clipboard";
+			_severity = "error";
+		}
+
+		setAlertMessage(_msg);
+		setSeverity(_severity);
+		setOpenAlert(true);
+	}
+
 	return (
-		<MainContainer maxWidth={"xl"}>
-			<Stack spacing={1} flexDirection={"column"}>
-				<HeaderBox>
-					<CommandsInput variant="standard" value={filterText} onChange={OnInputChanged} helperText={"Search for a specific Command via Title or Description"} />
-				</HeaderBox>
-				<CommandsTableContainer>
-					<Table stickyHeader>
-						<TableHead>
-							<TableRow>
-								<TableCell>Title</TableCell>
-								<TableCell>Commands</TableCell>
-								<TableCell>Description</TableCell>
-								<TableCell>Usage</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{
-								pageList.length > 0 &&
-								pageList.map(li => {
-									return (
-										<TableRow key={`command-${li.Title}`}>
-											<TableCell size="small">{li.Title}</TableCell>
-											<TableCell size="small">{li.List.join()}</TableCell>
-											<TableCell size="small">{li.Description}</TableCell>
-											<TableCell size="small">{li.Usage.join(" | ")}</TableCell>
-										</TableRow>
-									)
-								})
-							}
-						</TableBody>
-					</Table>
-				</CommandsTableContainer>
-				<CommandsPagination page={curPage} onChange={OnPageChange} count={numberOfPages} color={"primary"} />
-			</Stack>
-		</MainContainer>
+		<>
+			<AppBody>
+				<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
+					<Stack spacing={2}>
+						<HeaderBox>
+							<CommandsInput variant="standard" value={filterText} onChange={OnInputChanged} helperText={"Search for a specific Command via Title or Description"} />
+						</HeaderBox>
+						<CommandsTableContainer>
+							<Table stickyHeader>
+								<colgroup>
+									<col width={"20%"} />
+									<col width={"10%"} />
+									<col width={"50%"} />
+									<col width={"20%"} />
+								</colgroup>
+								<TableHead>
+									<TableRow>
+										<TableCell>Title</TableCell>
+										<TableCell>Commands</TableCell>
+										<TableCell>Description</TableCell>
+										<TableCell>Usage</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{
+										pageList.length > 0 &&
+										pageList.map(li => {
+											return (
+												<TableRow key={`command-${li.Title}`}>
+													<TableCell size="small">{li.Title}</TableCell>
+													<TableCell size="small">{li.List.join(", ")}</TableCell>
+													<TableCell size="small">{li.Description}</TableCell>
+													<TableCell size="small">
+														{
+															li.Usage.map((l) => {
+																return (
+																	<Stack key={`command-${li.Title}-usage-${l}`} spacing={1} flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"}>
+																		<Typography>{l}</Typography>
+																		<IconButton onClick={OnCopyClicked(l)} size={"small"}>
+																			<CopyIcon />
+																		</IconButton>
+																	</Stack>
+																)
+															})
+														}
+													</TableCell>
+												</TableRow>
+											)
+										})
+									}
+								</TableBody>
+							</Table>
+						</CommandsTableContainer>
+					</Stack>
+					<CommandsPagination page={curPage} onChange={OnPageChange} count={numberOfPages} color={"primary"} />
+				</Stack>
+			</AppBody>
+			<MainSnackbar open={alertOpen} onClose={OnAlertClosed} severity={severity} text={alertMessage} />
+		</>
 	)
 }
 

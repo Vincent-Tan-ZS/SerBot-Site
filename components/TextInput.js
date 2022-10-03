@@ -10,7 +10,10 @@ const TextInput = styled(TextField)(({ theme }) => `
 	}
 
 	.MuiFormHelperText-root {
-		color: white;
+		font-style: italic;
+		text-align: center;
+		color: gray;
+		font-size: ${theme.typography.body1.fontSize};
 	}
 `);
 
