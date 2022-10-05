@@ -237,7 +237,9 @@ export const getStaticProps = async () => {
 	try
 	{
 		const resp = await fetch(`http://${process.env.DOMAIN_NAME}:${process.env.DOMAIN_PORT}/api/command`);
+		console.log(resp);
 		const respData = await resp.json();
+		console.log(respData);
 
 		data = respData.data;
 	}
