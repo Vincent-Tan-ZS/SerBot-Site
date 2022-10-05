@@ -6,7 +6,6 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Loading />
-      <Backdrop />
       <Component {...pageProps} />
     </>
   )
