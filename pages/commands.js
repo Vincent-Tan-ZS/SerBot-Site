@@ -4,7 +4,7 @@ import React from "react";
 import TextInput from "../components/TextInput";
 import MainSnackbar from "../components/MainSnackbar";
 import AppBody from "../components/AppBody";
-import useSWR from "swr";
+import useSWRImmutable from 'swr/immutable';
 
 const CommandsTableContainer = styled(TableContainer)(({ theme }) => `
 	.MuiTableCell-root, {
@@ -74,7 +74,7 @@ const noOfRows = 10;
 
 function Commands() {
 	// List States
-	const { data, isValidating } = useSWR("/api/command", fetcher);
+	const { data, isValidating } = useSWRImmutable("/api/command", fetcher);
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States
