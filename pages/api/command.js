@@ -8,9 +8,7 @@ const handler = async (req, res) => {
 
 	const commands = await CommandModel.find({});
 	
-	res.status(200).json({
-		data: commands
-	})
+	res.status(200).send(commands);
 
 	await DisconnectDB();
 }

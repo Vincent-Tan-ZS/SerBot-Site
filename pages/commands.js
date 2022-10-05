@@ -1,9 +1,10 @@
-import {Box, IconButton, Pagination, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {Box, CircularProgress, IconButton, Pagination, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
 import TextInput from "../components/TextInput";
 import MainSnackbar from "../components/MainSnackbar";
 import AppBody from "../components/AppBody";
+import useSWR from "swr";
 
 const CommandsTableContainer = styled(TableContainer)(({ theme }) => `
 	.MuiTableCell-root, {
@@ -67,12 +68,13 @@ const CommandsPagination = styled(Pagination)`
 	}
 `;
 
+const fetcher = (...args) => fetch(...args).then(res => res.json());
+
 const noOfRows = 10;
 
-function Commands(props) {
-	const { list } = props;
-
+function Commands() {
 	// List States
+	const { data, error } = useSWR("/api/command", fetcher);
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States
@@ -89,7 +91,9 @@ function Commands(props) {
 	const [alertMessage, setAlertMessage] = React.useState("");
 
 	React.useEffect(() => {
-		let _list = list.map(li => {
+		if (data === undefined) return;
+
+		let _list = data.map(li => {
 			let _usage = li.Usage.map(u => `ser ${li.List[0]} ${u}`.trim());
 
 			return {
@@ -104,7 +108,7 @@ function Commands(props) {
 
 		setCommandList(_list);
 		setNumberOfPages(_numberOfPages);
-	}, [list]);
+	}, [data]);
 
 	React.useEffect(() => {
 		if (commandList.length <= 0) return;
@@ -194,6 +198,10 @@ function Commands(props) {
 								</TableHead>
 								<TableBody>
 									{
+										pageList.length <= 0 &&
+										<CircularProgress />
+									}
+									{
 										pageList.length > 0 &&
 										pageList.map(li => {
 											return (
@@ -229,32 +237,6 @@ function Commands(props) {
 			<MainSnackbar open={alertOpen} onClose={OnAlertClosed} severity={severity} text={alertMessage} />
 		</>
 	)
-}
-
-export const getStaticProps = async () => {
-	let data = [];
-
-	try
-	{
-		const resp = await fetch(`http://${process.env.DOMAIN_NAME}:${process.env.DOMAIN_PORT}/api/command`);
-		console.log(resp);
-		const respData = await resp.json();
-		console.log(respData);
-
-		data = respData.data;
-	}
-	catch (e)
-	{
-		console.log(e.message);
-	}
-	finally
-	{
-		return {
-			props: {
-				list: data
-			}
-		};
-	}
 }
 
 export default Commands;
