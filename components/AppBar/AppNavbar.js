@@ -10,8 +10,8 @@ function AppNavbar() {
 	return (
 		<NavBar>
 			<Toolbar variant={"dense"}>
-				<NavBarItem startIcon={<HomeIcon />} label={"Home"} labelWidth={'3%'} path={"/"} />
-				<NavBarItem startIcon={<ViewListIcon />} label={"Commands"} labelWidth={'6%'} path={"/commands"}/>	
+				<NavBarItem startIcon={<HomeIcon />} label={"Home"} path={"/"} />
+				<NavBarItem startIcon={<ViewListIcon />} label={"Commands"} path={"/commands"}/>	
 			</Toolbar>
 		</NavBar>
 	)

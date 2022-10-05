@@ -1,27 +1,23 @@
-import {Box, styled, Typography} from "@mui/material";
+import {Button, styled, Collapse} from "@mui/material";
 import Router from 'next/router';
 import React from "react";
 
-const StyledButton = styled(Box)(({ theme }) => `
-	display: contents;
+const StyledButton = styled(Button, {shouldForwardProp: prop => prop !== "hov"})(({ theme, hov }) => `
+	color: white;
+	align-items: flex-end;
 
-	padding-right: ${theme.spacing(1)};
-
-	&.hover {
-		cursor: pointer;
-	}
-
-	.MuiTypography-root {
-		margin-top: 0;
-		overflow: hidden;
-		padding-left: ${theme.spacing(1)};
-
-		transition: width 0.6s;
+	&.MuiButton-root {
+		${
+			hov === true && 
+			`background-color: #191919;
+			 border: 1px solid black;
+			 border-radius: ${theme.spacing(0.5)}`
+		}
 	}
 `);
 
 function NavBarItem(props) {
-	const { startIcon, label, labelWidth, path } = props;
+	const { startIcon, label, path } = props;
 
 	const [isHover, setIsHover] = React.useState(false);
 
@@ -38,13 +34,10 @@ function NavBarItem(props) {
 	}
 
 	return (
-		<StyledButton className={isHover ? "hover" : ""} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} onClick={OnBtnClicked}>
-			<Box>
-				{startIcon}
-			</Box>
-			<Typography width={isHover ? labelWidth : '0'}>
+		<StyledButton hov={isHover} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} onClick={OnBtnClicked} startIcon={startIcon}>
+			<Collapse in={isHover} orientation={"horizontal"}>
 				{label}
-			</Typography>
+			</Collapse>
 		</StyledButton>
 	)
 }
