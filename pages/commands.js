@@ -231,7 +231,7 @@ function Commands(props) {
 	)
 }
 
-export const getServerSideProps = async () => {
+export const getStaticProps = async () => {
 	let data = [];
 
 	try
