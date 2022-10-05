@@ -74,7 +74,7 @@ const noOfRows = 10;
 
 function Commands() {
 	// List States
-	const { data, error } = useSWR("/api/command", fetcher);
+	const { data, isValidating } = useSWR("/api/command", fetcher);
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States
@@ -198,11 +198,23 @@ function Commands() {
 								</TableHead>
 								<TableBody>
 									{
-										pageList.length <= 0 &&
-										<CircularProgress />
+										isValidating === true &&
+										<TableRow>
+											<TableCell colSpan={4} align={"center"}>
+												<CircularProgress />
+											</TableCell>
+										</TableRow>
 									}
 									{
-										pageList.length > 0 &&
+										(isValidating === false && pageList.length <= 0) &&
+										<TableRow>
+											<TableCell colSpan={4} align={"center"}>
+												Cannot find list :(
+											</TableCell>
+										</TableRow>
+									}
+									{
+										(isValidating === false && pageList.length > 0) &&
 										pageList.map(li => {
 											return (
 												<TableRow key={`command-${li.Title}`}>
