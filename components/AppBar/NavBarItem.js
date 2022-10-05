@@ -1,5 +1,5 @@
 import {Button, styled, Collapse} from "@mui/material";
-import Router from 'next/router';
+import Link from "next/link";
 import React from "react";
 
 const StyledButton = styled(Button, {shouldForwardProp: prop => prop !== "hov"})(({ theme, hov }) => `
@@ -29,16 +29,14 @@ function NavBarItem(props) {
 		setIsHover(false);
 	}
 
-	const OnBtnClicked = () => {
-		Router.push(path);
-	}
-
 	return (
-		<StyledButton hov={isHover} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} onClick={OnBtnClicked} startIcon={startIcon}>
-			<Collapse in={isHover} orientation={"horizontal"}>
-				{label}
-			</Collapse>
-		</StyledButton>
+		<Link href={path} passHref>
+			<StyledButton hov={isHover} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} startIcon={startIcon}>
+				<Collapse in={isHover} orientation={"horizontal"}>
+					{label}
+				</Collapse>
+			</StyledButton>
+		</Link>
 	)
 }
 

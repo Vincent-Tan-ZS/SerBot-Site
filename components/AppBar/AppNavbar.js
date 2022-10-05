@@ -2,9 +2,9 @@ import {Home as HomeIcon, ViewList as ViewListIcon} from "@mui/icons-material";
 import {AppBar, styled, Toolbar} from "@mui/material";
 import NavBarItem from "./NavBarItem";
 
-const NavBar = styled(AppBar)(({ theme }) => `
+const NavBar = styled(AppBar)`
 	background-color: #0e4686;
-`);
+`;
 
 function AppNavbar() {
 	return (
