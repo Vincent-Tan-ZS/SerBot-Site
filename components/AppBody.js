@@ -1,4 +1,4 @@
-import {Toolbar} from "@mui/material";
+import {Box, Toolbar} from "@mui/material";
 import AppNavbar from "./AppBar/AppNavbar";
 import MainContainer from "./MainContainer";
 
@@ -10,7 +10,9 @@ function AppBody(props) {
 			<AppNavbar />
 			<Toolbar variant={"dense"} />
 			<MainContainer>
-				{children}
+				<Box sx={{height: '100%'}}>
+					{children}
+				</Box>
 			</MainContainer>
 		</>
 	)

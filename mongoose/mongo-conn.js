@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
 
+let dbConn = null;
+
 export const ConnectDB = async() => {
+    if (dbConn !== null) return;
+
     try
     {
-        await mongoose.connect(
+        dbConn = await mongoose.connect(
             `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/?retryWrites=true&w=majority`, {
                 keepAlive: true,
                 dbName: "SerBot"
@@ -17,5 +21,6 @@ export const ConnectDB = async() => {
 }
 
 export const DisconnectDB = async() => {
+    if (dbConn === null) return;
 	await mongoose.disconnect();
 }

@@ -1,10 +1,10 @@
 import {Box, CircularProgress, IconButton, Pagination, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
-import TextInput from "../components/TextInput";
-import MainSnackbar from "../components/MainSnackbar";
-import AppBody from "../components/AppBody";
-import useSWRImmutable from 'swr/immutable';
+import TextInput from "../../components/TextInput";
+import MainSnackbar from "../../components/MainSnackbar";
+import AppBody from "../../components/AppBody";
+import useSWRImmutable from "swr/immutable";
 
 const CommandsTableContainer = styled(TableContainer)(({ theme }) => `
 	.MuiTableCell-root, {
@@ -36,7 +36,6 @@ const CommandsTableContainer = styled(TableContainer)(({ theme }) => `
 
 					&, .MuiTypography-root {
 						font-weight: bolder;
-						font-size: 12px;
 						color: ${theme.palette.primary.main};
 					}
 				}
@@ -68,13 +67,13 @@ const CommandsPagination = styled(Pagination)`
 	}
 `;
 
-const fetcher = (...args) => fetch(...args).then(res => res.json());
-
 const noOfRows = 10;
+const helperText = "Search for a specific Command via Title or Description";
+const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 function Commands() {
 	// List States
-	const { data, isValidating } = useSWRImmutable("/api/command", fetcher);
+	const { data, isValidating } = useSWRImmutable("/api/command", fetcher)
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States
@@ -90,21 +89,28 @@ function Commands() {
 	const [severity, setSeverity] = React.useState("warning");
 	const [alertMessage, setAlertMessage] = React.useState("");
 
+	// Helper Text States
+	const [helper, setHelper] = React.useState("");
+
 	React.useEffect(() => {
-		if (data === undefined) return;
+		let _list = [];
+		let _numberOfPages = 0;
 
-		let _list = data.map(li => {
-			let _usage = li.Usage.map(u => `ser ${li.List[0]} ${u}`.trim());
-
-			return {
-				Title: li.Title,
-				List: li.List,
-				Description: li.Description,
-				Usage: _usage
-			}
-		});
-
-		let _numberOfPages = GetNumberOfPages(_list);
+		if (data !== undefined)
+		{
+			_list = data.map(li => {
+				let _usage = li.Usage.map(u => `ser ${li.List[0]} ${u}`.trim());
+	
+				return {
+					Title: li.Title,
+					List: li.List,
+					Description: li.Description,
+					Usage: _usage
+				}
+			});
+	
+			_numberOfPages = GetNumberOfPages(_list);
+		}
 
 		setCommandList(_list);
 		setNumberOfPages(_numberOfPages);
@@ -145,6 +151,9 @@ function Commands() {
 
 	const OnInputChanged = (e) => {
 		setFilterText(e.target.value);
+
+		const _helperText = e.target.value.length > 0 ? helperText : "";
+		setHelper(_helperText);
 	}
 
 	const OnAlertClosed = () => {
@@ -176,9 +185,9 @@ function Commands() {
 		<>
 			<AppBody>
 				<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
-					<Stack spacing={2}>
+					<Stack spacing={2} overflow={'auto'}>
 						<HeaderBox>
-							<CommandsInput variant="standard" value={filterText} onChange={OnInputChanged} helperText={"Search for a specific Command via Title or Description"} />
+							<CommandsInput variant="standard" value={filterText} onChange={OnInputChanged} placeholder={helperText} helperText={helper} />
 						</HeaderBox>
 						<CommandsTableContainer>
 							<Table stickyHeader>

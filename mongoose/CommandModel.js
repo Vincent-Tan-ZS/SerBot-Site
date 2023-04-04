@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 // Commands
-const commandSchema = mongoose.Schema({
+const commandSchema = Schema({
     Title: {
         type: String,
         required: true
@@ -20,4 +20,4 @@ const commandSchema = mongoose.Schema({
     }
 });
 
-export default mongoose.models.Commands || mongoose.model('Commands', commandSchema, 'Commands');
+export default models?.Command || model("Command", commandSchema, "Commands");
