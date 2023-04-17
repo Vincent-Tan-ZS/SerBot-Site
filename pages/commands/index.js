@@ -1,71 +1,14 @@
-import {Box, CircularProgress, IconButton, Pagination, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {CircularProgress, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
-import TextInput from "../../components/TextInput";
 import MainSnackbar from "../../components/MainSnackbar";
 import AppBody from "../../components/AppBody";
-import useSWRImmutable from "swr/immutable";
-
-const CommandsTableContainer = styled(TableContainer)(({ theme }) => `
-	.MuiTableCell-root, {
-		color: white;
-	}
-
-	.MuiIconButton-root {
-		color: white;
-		margin-top: 0;
-
-		&:hover {
-			color: ${theme.palette.primary.main};
-		}
-	}
-
-	.MuiTableHead-root {
-		.MuiTableCell-root {
-			background-color: black;
-			font-weight: bolder;
-		}
-	}
-
-	.MuiTableBody-root {
-		.MuiTableRow-root {
-			&:hover {
-				background-color: #323232;
-
-				.MuiTableCell-root {
-
-					&, .MuiTypography-root {
-						font-weight: bolder;
-						color: ${theme.palette.primary.main};
-					}
-				}
-			}
-		}
-	}
-`);
-
-const HeaderBox = styled(Box)`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	width: 100%;
-`;
-
-const CommandsInput = styled(TextInput)`
-	width: 80%;
-
-	.MuiInput-input {
-		height: 4rem;
-		font-size: 24px;
-	}
-`;
-
-const CommandsPagination = styled(Pagination)`
-	.MuiPaginationItem-root {
-		color: white;
-	}
-`;
+import useSWRImmutable from "swr/immutable"; 
+import {GetNumberOfPages} from "../../Utils";
+import SearchInput from "../../components/SearchInput";
+import AppPagination from "../../components/AppPagination";
+import AppTableContainer from "../../components/AppTableContainer";
+import HeaderBox from "../../components/HeaderBox";
 
 const noOfRows = 10;
 const helperText = "Search for a specific Command via Title or Description";
@@ -89,9 +32,6 @@ function Commands() {
 	const [severity, setSeverity] = React.useState("warning");
 	const [alertMessage, setAlertMessage] = React.useState("");
 
-	// Helper Text States
-	const [helper, setHelper] = React.useState("");
-
 	React.useEffect(() => {
 		let _list = [];
 		let _numberOfPages = 0;
@@ -109,7 +49,7 @@ function Commands() {
 				}
 			});
 	
-			_numberOfPages = GetNumberOfPages(_list);
+			_numberOfPages = GetNumberOfPages(_list, noOfRows);
 		}
 
 		setCommandList(_list);
@@ -130,7 +70,7 @@ function Commands() {
 												c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined);
 
 		let _pageList = GetPageList(_filtered, 1);
-		let _numberOfPages = GetNumberOfPages(_filtered);
+		let _numberOfPages = GetNumberOfPages(_filtered, noOfRows);
 
 		setCurPage(1);
 		setNumberOfPages(_numberOfPages);
@@ -139,21 +79,6 @@ function Commands() {
 
 	const GetPageList = (_list, _page = curPage) => {
 		return _list.slice((_page - 1) * noOfRows, _page * noOfRows);
-	}
-
-	const GetNumberOfPages = (_list) => {
-		return Math.ceil(_list.length / noOfRows);
-	}
-
-	const OnPageChange = (e, _page) => {
-		setCurPage(_page);
-	}
-
-	const OnInputChanged = (e) => {
-		setFilterText(e.target.value);
-
-		const _helperText = e.target.value.length > 0 ? helperText : "";
-		setHelper(_helperText);
 	}
 
 	const OnAlertClosed = () => {
@@ -187,9 +112,9 @@ function Commands() {
 				<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
 					<Stack spacing={2} overflow={'auto'}>
 						<HeaderBox>
-							<CommandsInput variant="standard" value={filterText} onChange={OnInputChanged} placeholder={helperText} helperText={helper} />
+							<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
 						</HeaderBox>
-						<CommandsTableContainer>
+						<AppTableContainer>
 							<Table stickyHeader>
 								<colgroup>
 									<col width={"20%"} />
@@ -250,9 +175,9 @@ function Commands() {
 									}
 								</TableBody>
 							</Table>
-						</CommandsTableContainer>
+						</AppTableContainer>
 					</Stack>
-					<CommandsPagination page={curPage} onChange={OnPageChange} count={numberOfPages} color={"primary"} />
+					<AppPagination pageState={{curPage, setCurPage}} total={numberOfPages} />
 				</Stack>
 			</AppBody>
 			<MainSnackbar open={alertOpen} onClose={OnAlertClosed} severity={severity} text={alertMessage} />
