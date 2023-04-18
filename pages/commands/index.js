@@ -1,10 +1,9 @@
 import {CircularProgress, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
-import MainSnackbar from "../../components/MainSnackbar";
 import AppBody from "../../components/AppBody";
 import useSWRImmutable from "swr/immutable"; 
-import {GetNumberOfPages} from "../../Utils";
+import {CopyToClipboard, GetNumberOfPages, SNACKBAR_SEVERITY_ERROR, SNACKBAR_SEVERITY_INFO, SNACKBAR_SEVERITY_WARNING, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
 import SearchInput from "../../components/SearchInput";
 import AppPagination from "../../components/AppPagination";
 import AppTableContainer from "../../components/AppTableContainer";
@@ -14,7 +13,9 @@ const noOfRows = 10;
 const helperText = "Search for a specific Command via Title or Description";
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-function Commands() {
+function Commands(props) {
+	const { snackbarStates } = props;
+
 	// List States
 	const { data, isValidating } = useSWRImmutable("/api/command", fetcher)
 	const [commandList, setCommandList] = React.useState([]);
@@ -26,11 +27,6 @@ function Commands() {
 	const [curPage, setCurPage] = React.useState(1);
 	const [numberOfPages, setNumberOfPages] = React.useState(1);
 	const [pageList, setPageList] = React.useState([]);
-
-	// Alert States
-	const [alertOpen, setOpenAlert] = React.useState(false);
-	const [severity, setSeverity] = React.useState("warning");
-	const [alertMessage, setAlertMessage] = React.useState("");
 
 	React.useEffect(() => {
 		let _list = [];
@@ -81,29 +77,8 @@ function Commands() {
 		return _list.slice((_page - 1) * noOfRows, _page * noOfRows);
 	}
 
-	const OnAlertClosed = () => {
-		setOpenAlert(false);
-	}
-
 	const OnCopyClicked = (list) => () => {
-		let _msg = "";
-		let _severity = "warning";
-
-		try
-		{
-			navigator.clipboard.writeText(list);
-			_msg = "Copied to Clipboard";
-			_severity = "info";
-		}
-		catch (e)
-		{
-			_msg = "Unable to Copy to Clipboard";
-			_severity = "error";
-		}
-
-		setAlertMessage(_msg);
-		setSeverity(_severity);
-		setOpenAlert(true);
+		CopyToClipboard(snackbarStates, list);
 	}
 
 	return (
@@ -180,7 +155,6 @@ function Commands() {
 					<AppPagination pageState={{curPage, setCurPage}} total={numberOfPages} />
 				</Stack>
 			</AppBody>
-			<MainSnackbar open={alertOpen} onClose={OnAlertClosed} severity={severity} text={alertMessage} />
 		</>
 	)
 }

@@ -2,9 +2,9 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {GetNumberOfPages} from "../../Utils";
+import {CopyToClipboard, GetNumberOfPages} from "../../Utils";
 import {Box, Card, CardActions, CardContent, CardMedia, Grid, IconButton, Stack, Tooltip, Typography, styled} from "@mui/material";
-import {Link as LinkIcon, Delete as DeleteIcon} from '@mui/icons-material';
+import {Link as LinkIcon, Delete as DeleteIcon, BrokenImage as BrokenImageIcon, Edit as EditIcon} from '@mui/icons-material';
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
 import {format} from "date-fns";
@@ -45,7 +45,17 @@ const CountdownImage = (props) => {
 
 	return (
 		<span style={spanStyle}>
-			<CardMedia {...props} />
+			{
+				props.src?.length > 0 &&
+				<CardMedia {...props} />
+			}
+			{
+				props.src?.length <= 0 &&
+				<Box height={"100px"} width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
+					<BrokenImageIcon sx={{fontSize: "5rem"}} />
+					<Typography>No Image Added</Typography>
+				</Box>
+			}
 		</span>
 	)
 }
@@ -56,8 +66,10 @@ const helperText = "Search for a specific Countdown";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-function Countdowns ()
+function Countdowns (props)
 {
+	const { snackbarStates } = props;
+
 	const { data, isValidating } = useSWRImmutable("/api/countdowns", fetcher)
 	const [countdownList, setCountdownList] = React.useState([]);
 
@@ -112,29 +124,12 @@ function Countdowns ()
 		return _list.slice((_page - 1) * noOfColumns, _page * noOfColumns);
 	}
 
-	// const OnAlertClosed = () => {
-	// 	setOpenAlert(false);
-	// }
-
 	const OnDeleteClicked = (cdName) => () => {
-		let _msg = "";
-		let _severity = "warning";
+		CopyToClipboard(snackbarStates, `ser cd delete ${cdName}`);
+	}
 
-		try
-		{
-			navigator.clipboard.writeText(`ser cd delete ${cdName}`);
-			_msg = "Copied to Clipboard";
-			_severity = "info";
-		}
-		catch (e)
-		{
-			_msg = "Unable to Copy to Clipboard";
-			_severity = "error";
-		}
-
-		// setAlertMessage(_msg);
-		// setSeverity(_severity);
-		// setOpenAlert(true);
+	const OnEditClicked = (cdName) => () => {
+		CopyToClipboard(snackbarStates, `ser cd update ${cdName}`);
 	}
 
 	const OnLinkClicked = (cdLink) => () => {
@@ -166,12 +161,19 @@ function Countdowns ()
 															</CardContent>
 														</Box>
 														<CardActions>
-															<Stack direction={"row"} gap={1} >
-																<Tooltip title={"Copy delete command"}>
-																	<IconButton color={"primary"} onClick={OnDeleteClicked(c.Name)}>
-																		<DeleteIcon />
-																	</IconButton>
-																</Tooltip>
+															<Stack direction={"row"} gap={1} justifyContent={"space-between"} width={"100%"}>
+																<Box>
+																	<Tooltip title={"Copy update command"}>
+																		<IconButton color={"primary"} onClick={OnEditClicked(c.Name)}>
+																			<EditIcon />
+																		</IconButton>
+																	</Tooltip>
+																	<Tooltip title={"Copy delete command"}>
+																		<IconButton color={"primary"} onClick={OnDeleteClicked(c.Name)}>
+																			<DeleteIcon />
+																		</IconButton>
+																	</Tooltip>
+																</Box>
 																{
 																	c.URL?.length > 0 &&
 																	<Tooltip title={"Visit Countdown URL"}>
