@@ -7,10 +7,13 @@ import {Box, Card, CardActions, CardContent, CardMedia, Grid, IconButton, Stack,
 import {Link as LinkIcon, Delete as DeleteIcon, BrokenImage as BrokenImageIcon, Edit as EditIcon} from '@mui/icons-material';
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
-import {format} from "date-fns";
+import {differenceInDays, format} from "date-fns";
 
-const CountdownCard = styled(Card)`	
-	background-color: rgb(24, 26, 27);
+const cardMediaHeight = '140px';
+
+const CountdownCard = styled(Card)`
+	box-shadow: 0px 0px 8px 4px #0E4686;
+	background-color: #24252C;
 	color: white;
 	height: 500px;
 
@@ -18,8 +21,12 @@ const CountdownCard = styled(Card)`
 	flex-direction: column;
 	justify-content: space-between;
 
+	:hover {
+		box-shadow: 0px 0px 8px 8px #3e6a9e;
+	}
+
 	.MuiCardMedia-root {
-		height: 100px;
+		height: ${cardMediaHeight};
 		width: 100%;
 	}
 
@@ -51,7 +58,7 @@ const CountdownImage = (props) => {
 			}
 			{
 				props.src?.length <= 0 &&
-				<Box height={"100px"} width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
+				<Box height={cardMediaHeight} width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
 					<BrokenImageIcon sx={{fontSize: "5rem"}} />
 					<Typography>No Image Added</Typography>
 				</Box>
@@ -88,9 +95,12 @@ function Countdowns (props)
 		if (data !== undefined)
 		{
 			_list = data.map((l) => {
+				let date = new Date(l.Date);
+				let diff = differenceInDays(date, new Date());
+
 				return {
 					...l,
-					Date: format(new Date(l.Date), "d MMMM y")
+					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
 				}
 			});
 			_numberOfPages = GetNumberOfPages(_list, noOfColumns);
@@ -140,18 +150,18 @@ function Countdowns (props)
 		<>
 			<AppBody>
 				<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
-					<Stack spacing={2} overflow={'auto'}>
+					<Stack spacing={2} overflow={'auto'} height={"100%"}>
 						<HeaderBox>
 							<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
 						</HeaderBox>
-						<Box>
+						<Box height={"100%"} style={{marginLeft: '32px', marginRight: '32px'}}>
 							{
-								<Grid container spacing={2}>
+								<Grid container spacing={3}>
 									{
 										pageList.map((c, ind) => {
 											return (
 												<Grid key={`countdown-card-${ind}-${c.Name}`} item xs={3}>
-													<CountdownCard elevation={8}>
+													<CountdownCard>
 														<Box>
 															<CountdownImage component={"img"} src={c.Image} title={c.Name} />
 															<CardContent>

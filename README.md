@@ -1,3 +1,6 @@
+## v2.0
+- Added Countdowns List page
+
 ## v1.1
 - Disable Revalidation
 
