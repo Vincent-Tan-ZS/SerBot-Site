@@ -2,9 +2,9 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {ChunkArray, GetNumberOfPages} from "../../Utils";
-import {Box, Button, Card, CardActions, CardContent, CardMedia, Grid, IconButton, Stack, Typography, styled} from "@mui/material";
-import {Link as LinkIcon} from '@mui/icons-material';
+import {GetNumberOfPages} from "../../Utils";
+import {Box, Card, CardActions, CardContent, CardMedia, Grid, IconButton, Stack, Tooltip, Typography, styled} from "@mui/material";
+import {Link as LinkIcon, Delete as DeleteIcon} from '@mui/icons-material';
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
 import {format} from "date-fns";
@@ -12,7 +12,7 @@ import {format} from "date-fns";
 const CountdownCard = styled(Card)`	
 	background-color: rgb(24, 26, 27);
 	color: white;
-	height: 300px;
+	height: 500px;
 
 	display: flex;
 	flex-direction: column;
@@ -29,16 +29,29 @@ const CountdownCard = styled(Card)`
 `;
 
 const CountdownImage = (props) => {
+	let spanStyle = {
+		display: 'block',
+		padding: '4px',
+		background: '#303436'
+	};
+
+	// if (props.src.length > 0)
+	// {
+	// 	spanStyle.background = `url(${props.src})`;
+	// 	spanStyle.backgroundSize = '300px 100px';
+	// 	spanStyle.backgroundPositionX = 'center';
+	// 	spanStyle.backgroundPositionY = 'center';
+	// }
+
 	return (
-		<span style={{display: 'flex', justifyContent: 'center', padding: '4px', background:'#303436'}}>
+		<span style={spanStyle}>
 			<CardMedia {...props} />
 		</span>
 	)
 }
 
-const noOfRows = 3;
 const noOfColumns = 4;
-const descLength = 130;
+const descLength = 300;
 const helperText = "Search for a specific Countdown";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
@@ -47,7 +60,6 @@ function Countdowns ()
 {
 	const { data, isValidating } = useSWRImmutable("/api/countdowns", fetcher)
 	const [countdownList, setCountdownList] = React.useState([]);
-	const [chunkedList, setChunkedList] = React.useState([]);
 
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
@@ -69,17 +81,12 @@ function Countdowns ()
 					Date: format(new Date(l.Date), "d MMMM y")
 				}
 			});
-			_numberOfPages = GetNumberOfPages(_list, noOfRows, noOfColumns);
+			_numberOfPages = GetNumberOfPages(_list, noOfColumns);
 		}
 
 		setCountdownList(_list);
 		setNumberOfPages(_numberOfPages);
 	}, [data]);
-
-	React.useEffect(() => {
-		const _chunked = ChunkArray(pageList, noOfColumns);
-		setChunkedList(_chunked);
-	}, [pageList]);
 
 	React.useEffect(() => {
 		if (countdownList.length <= 0) return;
@@ -91,19 +98,18 @@ function Countdowns ()
 	React.useEffect(() => {
 		if (countdownList.length <= 0) return;
 
-		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()) || 
-												c.Description.toLowerCase().includes(filterText.toLowerCase()));
+		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()));
 
-		// let _pageList = GetPageList(_filtered, 1);
-		// let _numberOfPages = GetNumberOfPages(_filtered, noOfRows, noOfColumns);
+		let _pageList = GetPageList(_filtered, 1);
+		let _numberOfPages = GetNumberOfPages(_filtered, noOfColumns);
 
-		// setCurPage(1);
-		// setNumberOfPages(_numberOfPages);
-		// setPageList(_pageList);
+		setCurPage(1);
+		setNumberOfPages(_numberOfPages);
+		setPageList(_pageList);
 	}, [filterText]);
 
 	const GetPageList = (_list, _page = curPage) => {
-		return _list.slice((_page - 1) * noOfRows, _page * noOfRows);
+		return _list.slice((_page - 1) * noOfColumns, _page * noOfColumns);
 	}
 
 	// const OnAlertClosed = () => {
@@ -145,41 +151,43 @@ function Countdowns ()
 						</HeaderBox>
 						<Box>
 							{
-								chunkedList.map((row, rowInd) => {
-									return (
-										<Grid paddingBottom={2} key={`countdown-row-${rowInd}`} container spacing={2}>
-											{
-												row.map((c, ind) => {
-													return (
-														<Grid key={`countdown-card-${rowInd}-${ind}`} item xs={3}>
-															<CountdownCard elevation={8}>
-																<Box>
-																	<CountdownImage component={"img"} src={c.Image} title={c.Name} />
-																	<CardContent>
-																		<Typography variant={"h6"} fontWeight={"bold"}>{c.Name}</Typography>
-																		<Typography fontStyle={"italic"}>{c.Date}</Typography>
-																		<Typography>{c.Description?.length > descLength ? `${c.Description.substring(0, descLength)}...` : c.Description}</Typography>
-																	</CardContent>
-																</Box>
-																<CardActions>
-																	<Stack direction={"row"} gap={1}>
-																		<Button size={"small"} variant={"contained"} onClick={OnDeleteClicked(c.Name)}>Delete</Button>
-																		{
-																			c.URL?.length > 0 &&
-																			<IconButton color={"primary"} onClick={OnLinkClicked(c.URL)}>
-																				<LinkIcon />
-																			</IconButton>
-																		}
-																	</Stack>
-																</CardActions>
-															</CountdownCard>
-														</Grid>
-													)
-												})
-											}
-										</Grid>
-									);
-								})
+								<Grid container spacing={2}>
+									{
+										pageList.map((c, ind) => {
+											return (
+												<Grid key={`countdown-card-${ind}-${c.Name}`} item xs={3}>
+													<CountdownCard elevation={8}>
+														<Box>
+															<CountdownImage component={"img"} src={c.Image} title={c.Name} />
+															<CardContent>
+																<Typography variant={"h6"} fontWeight={"bold"}>{c.Name}</Typography>
+																<Typography fontStyle={"italic"}>{c.Date}</Typography>
+																<Typography>{c.Description?.length > descLength ? `${c.Description.substring(0, descLength)}...` : c.Description}</Typography>
+															</CardContent>
+														</Box>
+														<CardActions>
+															<Stack direction={"row"} gap={1} >
+																<Tooltip title={"Copy delete command"}>
+																	<IconButton color={"primary"} onClick={OnDeleteClicked(c.Name)}>
+																		<DeleteIcon />
+																	</IconButton>
+																</Tooltip>
+																{
+																	c.URL?.length > 0 &&
+																	<Tooltip title={"Visit Countdown URL"}>
+																		<IconButton color={"primary"} onClick={OnLinkClicked(c.URL)}>
+																			<LinkIcon />
+																		</IconButton>
+																	</Tooltip>
+																}
+															</Stack>
+														</CardActions>
+													</CountdownCard>
+												</Grid>
+											)
+										})
+									}
+								</Grid>
 							}
 						</Box>
 					</Stack>
