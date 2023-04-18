@@ -1,7 +1,7 @@
-import {Box, Button, styled, Typography} from "@mui/material";
+import {Box, Button, Stack, styled, Typography} from "@mui/material";
 import Link from "next/link";
 import AppBody from "../components/AppBody";
-import { ViewList as ViewListIcon } from "@mui/icons-material";
+import { ViewList as ViewListIcon, HourglassBottom as HourglassBottomIcon } from "@mui/icons-material";
 
 const HeaderBox = styled(Box)`
   display: flex;
@@ -22,12 +22,20 @@ function Home() {
           <Typography variant={"h3"}>
             Sorry, this page is still a Work In Progress :(
           </Typography>
-          <Link href="/commands" passHref>
-            <Button variant={"contained"}>
-              <ViewListIcon />
-              Commands
-            </Button>
-          </Link>
+          <Stack gap={1} direction={"column"} justifyContent={"center"} alignItems={"center"}>
+            <Link href="/commands" passHref>
+              <Button variant={"contained"}>
+                <ViewListIcon />
+                &nbsp;Commands
+              </Button>
+            </Link>
+            <Link href="/countdowns" passHref>
+              <Button variant={"contained"}>
+                <HourglassBottomIcon />
+                &nbsp;Countdowns
+              </Button>
+            </Link>
+          </Stack>
         </HeaderBox>
       </AppBody>
     </>

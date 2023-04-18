@@ -13,23 +13,33 @@ const LoadingScreen = styled(Backdrop)`
 
 function Loading() {
     const router = useRouter();
-
     const [loading, setLoading] = React.useState(false);
+    const [nextURL, setNextURL] = React.useState("");
+
+    const handleStart = (url) => {
+        if (url === router.pathname) return;
+
+        setNextURL(url);
+        setLoading(true);
+    }
+
+    const handleComplete = (url) => setLoading(false);
 
     React.useEffect(() => {
-        const handleStart = (url) => (url !== router.asPath) && setLoading(true);
-        const handleComplete = (url) => (url === router.asPath) && setLoading(false);
+        if (router.pathname === nextURL)
+        {
+            setNextURL("");
+            setLoading(false);
+        }
 
         router.events.on('routeChangeStart', handleStart)
-        router.events.on('routeChangeComplete', handleComplete)
         router.events.on('routeChangeError', handleComplete)
 
         return () => {
             router.events.off('routeChangeStart', handleStart)
-            router.events.off('routeChangeComplete', handleComplete)
             router.events.off('routeChangeError', handleComplete)
         }
-    });
+    }, [router]);
 
 	return loading &&
 	(

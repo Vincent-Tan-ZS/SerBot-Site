@@ -62,7 +62,7 @@ const CountdownImage = (props) => {
 
 const noOfColumns = 4;
 const descLength = 300;
-const helperText = "Search for a specific Countdown";
+const helperText = "Search for a specific Countdown via Name";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 

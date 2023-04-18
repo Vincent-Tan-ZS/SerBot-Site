@@ -3,7 +3,7 @@ import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
 import AppBody from "../../components/AppBody";
 import useSWRImmutable from "swr/immutable"; 
-import {CopyToClipboard, GetNumberOfPages, SNACKBAR_SEVERITY_ERROR, SNACKBAR_SEVERITY_INFO, SNACKBAR_SEVERITY_WARNING, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
+import {CopyToClipboard, GetNumberOfPages } from "../../Utils";
 import SearchInput from "../../components/SearchInput";
 import AppPagination from "../../components/AppPagination";
 import AppTableContainer from "../../components/AppTableContainer";
