@@ -2,7 +2,7 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {GetNumberOfPages} from "../../Utils";
+import {COUNTDOWN_CARD_TYPE_ADD, COUNTDOWN_CARD_TYPE_COUNTDOWN, GetNumberOfPages} from "../../Utils";
 import {Box, Grid, Stack} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
@@ -14,10 +14,8 @@ const helperText = "Search for a specific Countdown via Name";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-function Countdowns (props)
+function Countdowns ()
 {
-	const { snackbarStates } = props;
-
 	const { data, isValidating } = useSWRImmutable("/api/countdowns", fetcher)
 	const [countdownList, setCountdownList] = React.useState([]);
 
@@ -41,11 +39,21 @@ function Countdowns (props)
 
 				return {
 					...l,
-					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
+					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`,
+					CardType: COUNTDOWN_CARD_TYPE_COUNTDOWN
 				}
 			});
 			_numberOfPages = GetNumberOfPages(_list, noOfColumns);
 		}
+
+		_list.push({
+			Name: "",
+			Date: "",
+			Description: "",
+			Image: "",
+			URL: "",
+			CardType: COUNTDOWN_CARD_TYPE_ADD
+		});
 
 		setCountdownList(_list);
 		setNumberOfPages(_numberOfPages);
@@ -61,7 +69,7 @@ function Countdowns (props)
 	React.useEffect(() => {
 		if (countdownList.length <= 0) return;
 
-		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()));
+		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()) || c.CardType === COUNTDOWN_CARD_TYPE_ADD);
 
 		let _pageList = GetPageList(_filtered, 1);
 		let _numberOfPages = GetNumberOfPages(_filtered, noOfColumns);
@@ -90,7 +98,7 @@ function Countdowns (props)
 										pageList.map((c, ind) => {
 											return (
 												<Grid key={`countdown-card-${ind}-${c.Name}`} item xs={3}>
-													<CountdownCard countdown={c} animationDelay={`${(ind + 1)*0.05}s`} snackbarStates={snackbarStates} />
+													<CountdownCard countdown={c} animationDelay={`${(ind + 1)*0.05}s`} name={filterText} />
 												</Grid>
 											)
 										})

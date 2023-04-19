@@ -8,13 +8,14 @@ import SearchInput from "../../components/SearchInput";
 import AppPagination from "../../components/AppPagination";
 import AppTableContainer from "../../components/AppTableContainer";
 import HeaderBox from "../../components/HeaderBox";
+import {SnackbarContext} from "../../contexts/SnackbarContext";
 
 const noOfRows = 10;
 const helperText = "Search for a specific Command via Title or Description";
 const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-function Commands(props) {
-	const { snackbarStates } = props;
+function Commands() {
+	const snackbarStates = React.useContext(SnackbarContext);
 
 	// List States
 	const { data, isValidating } = useSWRImmutable("/api/command", fetcher)

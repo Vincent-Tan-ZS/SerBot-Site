@@ -6,7 +6,8 @@ const countdownSchema = Schema({
         required: true
     },
     Date: {
-        type: Date
+        type: Date,
+        required: true
     },
     Description: {
         type: String
@@ -16,6 +17,10 @@ const countdownSchema = Schema({
     },
     URL: {
         type: String
+    },
+    UserId: {
+        type: String,
+        required: true
     }
 });
 

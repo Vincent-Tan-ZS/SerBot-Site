@@ -3,6 +3,9 @@ import Loading from '../components/Loading'
 import MainSnackbar from '../components/MainSnackbar'
 import '../styles/globals.css'
 import {SNACKBAR_SEVERITY_INFO} from '../Utils';
+import BaseModal from '../components/BaseModal';
+import {ModalContext} from '../contexts/ModalContext';
+import {SnackbarContext} from '../contexts/SnackbarContext';
 
 function MyApp({ Component, pageProps }) {
   // Snackbar
@@ -13,12 +16,29 @@ function MyApp({ Component, pageProps }) {
   const OnSnackbarClose = () => {
     setSnackbarOpen(false);
   }
+  
+  // Modal
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [modalTitle, setModalTitle] = React.useState("");
+  const [modalChildren, setModalChildren] = React.useState(<></>);
+
+  const OnModalClosed = () => {
+    setModalOpen(false);
+  }
 
   return (
     <>
       <Loading />
       <MainSnackbar open={snackbarOpen} onClose={OnSnackbarClose} text={snackbarText} severity={snackbarSeverity} />
-      <Component snackbarStates={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}} {...pageProps} />
+      <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle}>
+        {modalChildren}
+      </BaseModal>
+      
+      <SnackbarContext.Provider value={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}}>
+        <ModalContext.Provider value={{setModalOpen, setModalTitle, setModalChildren}}>
+          <Component {...pageProps} />
+        </ModalContext.Provider>
+      </SnackbarContext.Provider>
     </>
   )
 }

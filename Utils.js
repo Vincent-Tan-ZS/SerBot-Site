@@ -3,6 +3,9 @@ export const SNACKBAR_SEVERITY_INFO = "info";
 export const SNACKBAR_SEVERITY_SUCCESS = "success";
 export const SNACKBAR_SEVERITY_ERROR = "error";
 
+export const COUNTDOWN_CARD_TYPE_COUNTDOWN = "countdown";
+export const COUNTDOWN_CARD_TYPE_ADD = "countdown_add";
+
 export const CopyToClipboard = (snackbarStates, text) => {
 	let _msg = "";
 	let _severity = SNACKBAR_SEVERITY_WARNING;
