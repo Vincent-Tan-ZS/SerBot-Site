@@ -24,7 +24,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => `
 		}
 
 		.MuiInputBase-root {
-			.MuiInputBase-input {
+			.MuiInputBase-input, .MuiSelect-icon {
 				color: white;
 			}
 
@@ -42,10 +42,10 @@ const StyledDialog = styled(Dialog)(({ theme }) => `
 `);
 
 export default function BaseModal(props) {
-	const { open, OnClose, title, children } = props;
+	const { open, OnClose, title, maxWidth, children } = props;
 
 	return (
-		<StyledDialog open={Boolean(open)} onClose={OnClose} maxWidth={"lg"} fullWidth>
+		<StyledDialog open={Boolean(open)} onClose={OnClose} maxWidth={maxWidth ?? "lg"} fullWidth>
 			<DialogTitle>
 				{title}
 			</DialogTitle>

@@ -20,6 +20,7 @@ function MyApp({ Component, pageProps }) {
   // Modal
   const [modalOpen, setModalOpen] = React.useState(false);
   const [modalTitle, setModalTitle] = React.useState("");
+  const [modalMaxWidth, setModalMaxWidth] = React.useState("lg");
   const [modalChildren, setModalChildren] = React.useState(<></>);
 
   const OnModalClosed = () => {
@@ -30,12 +31,13 @@ function MyApp({ Component, pageProps }) {
     <>
       <Loading />
       <MainSnackbar open={snackbarOpen} onClose={OnSnackbarClose} text={snackbarText} severity={snackbarSeverity} />
-      <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle}>
-        {modalChildren}
-      </BaseModal>
+      
       
       <SnackbarContext.Provider value={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}}>
-        <ModalContext.Provider value={{setModalOpen, setModalTitle, setModalChildren}}>
+        <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth}>
+          {modalChildren}
+        </BaseModal>
+        <ModalContext.Provider value={{setModalOpen, setModalTitle, setModalMaxWidth, setModalChildren,}}>
           <Component {...pageProps} />
         </ModalContext.Provider>
       </SnackbarContext.Provider>

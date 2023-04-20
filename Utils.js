@@ -3,6 +3,18 @@ export const SNACKBAR_SEVERITY_INFO = "info";
 export const SNACKBAR_SEVERITY_SUCCESS = "success";
 export const SNACKBAR_SEVERITY_ERROR = "error";
 
+export const SelectMenuProps = {
+	MenuListProps: {
+		sx: {
+			background: '#121216',
+			color: 'white',
+			'.MuiMenuItem-root:hover': {
+				background: '#19191e'
+			}
+		}
+	}
+};
+
 export const CopyToClipboard = (snackbarStates, text) => {
 	let _msg = "";
 	let _severity = SNACKBAR_SEVERITY_WARNING;

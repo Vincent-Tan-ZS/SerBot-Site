@@ -9,6 +9,8 @@ import AppPagination from "../../components/AppPagination";
 import AppTableContainer from "../../components/AppTableContainer";
 import HeaderBox from "../../components/HeaderBox";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
+import {ModalContext} from "../../contexts/ModalContext";
+import {CopyCommandsModalChild} from "../../components/Modals/CopyCommandsModalChild";
 
 const noOfRows = 10;
 const helperText = "Search for a specific Command via Title or Description";
@@ -16,6 +18,7 @@ const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 function Commands() {
 	const snackbarStates = React.useContext(SnackbarContext);
+	const modalStates = React.useContext(ModalContext);
 
 	// List States
 	const { data, isValidating } = useSWRImmutable("/api/command", fetcher)
@@ -79,7 +82,23 @@ function Commands() {
 	}
 
 	const OnCopyClicked = (list) => () => {
-		CopyToClipboard(snackbarStates, list);
+		const matches = list.match(/{.+?}|@\w+|[[]\w+?]/g);
+
+		if (matches === null)
+		{
+			CopyToClipboard(snackbarStates, list);
+		}
+		else
+		{
+			const mentions = matches.filter(m => m.startsWith("@"));
+			const days = matches.filter(m => m.startsWith("["));
+			const options = matches.filter(m => m.startsWith("{"));
+
+			modalStates.setModalTitle("Copy Command");
+			modalStates.setModalMaxWidth("md");
+			modalStates.setModalChildren(<CopyCommandsModalChild command={list} options={options} mentions={mentions} days={days} />);
+			modalStates.setModalOpen(true);
+		}
 	}
 
 	return (
