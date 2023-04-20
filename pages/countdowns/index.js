@@ -2,7 +2,7 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {COUNTDOWN_CARD_TYPE_ADD, COUNTDOWN_CARD_TYPE_COUNTDOWN, GetNumberOfPages} from "../../Utils";
+import {GetNumberOfPages} from "../../Utils";
 import {Box, Grid, Stack} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
@@ -39,21 +39,11 @@ function Countdowns ()
 
 				return {
 					...l,
-					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`,
-					CardType: COUNTDOWN_CARD_TYPE_COUNTDOWN
+					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
 				}
 			});
 			_numberOfPages = GetNumberOfPages(_list, noOfColumns);
 		}
-
-		_list.push({
-			Name: "",
-			Date: "",
-			Description: "",
-			Image: "",
-			URL: "",
-			CardType: COUNTDOWN_CARD_TYPE_ADD
-		});
 
 		setCountdownList(_list);
 		setNumberOfPages(_numberOfPages);
@@ -69,7 +59,7 @@ function Countdowns ()
 	React.useEffect(() => {
 		if (countdownList.length <= 0) return;
 
-		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()) || c.CardType === COUNTDOWN_CARD_TYPE_ADD);
+		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()));
 
 		let _pageList = GetPageList(_filtered, 1);
 		let _numberOfPages = GetNumberOfPages(_filtered, noOfColumns);

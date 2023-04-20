@@ -5,8 +5,6 @@ import {Link as LinkIcon, Delete as DeleteIcon, BrokenImage as BrokenImageIcon, 
 import {COUNTDOWN_CARD_TYPE_ADD, COUNTDOWN_CARD_TYPE_COUNTDOWN, CopyToClipboard} from "../Utils";
 import { zoomIn } from "react-animations";
 import {SnackbarContext} from "../contexts/SnackbarContext";
-import {ModalContext} from "../contexts/ModalContext";
-import AddCountdownModalContent from "./Modals/AddCountdownModalContent";
 
 const descLength = 300;
 const cardMediaHeight = '140px';
@@ -50,26 +48,6 @@ const CountdownCardStyle = styled(Card)`
 	}
 `;
 
-const AddCardContent = styled(CardContent)(({ theme }) => `
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	.MuiSvgIcon-root {
-		font-size: 4rem;
-		transition: font-size 0.2s;
-		color: ${theme.palette.primary.main};
-	}
-
-	:hover {
-		.MuiSvgIcon-root {
-			font-size: 5rem;
-			color: ${theme.palette.primary.light};
-		}
-	}
-`)
-
 const CountdownImage = (props) => {
 	let spanStyle = {
 		display: 'block',
@@ -103,9 +81,8 @@ const CountdownImage = (props) => {
 }
 
 export default function CountdownCard(props) {
-	const { countdown, animationDelay, name } = props;
+	const { countdown, animationDelay } = props;
 	const snackbarStates = React.useContext(SnackbarContext);
-	const modalStates = React.useContext(ModalContext);
 
 	const [opacityClass, setOpacityClass] = React.useState("hide");
 
@@ -125,62 +102,42 @@ export default function CountdownCard(props) {
 		setOpacityClass("show");
 	}
 
-	const OnCardClicked = (cardType) => () => {
-		if (cardType !== COUNTDOWN_CARD_TYPE_ADD) return;
-
-		modalStates.setModalOpen(true);
-		modalStates.setModalTitle("Add Countdown");
-		modalStates.setModalChildren(<AddCountdownModalContent name={name} />);
-	}
-
 	return (
-		<CountdownCardStyle sx={{animationDelay: animationDelay}} className={`${opacityClass} ${countdown.CardType === COUNTDOWN_CARD_TYPE_ADD && "clickable"}`} onAnimationStart={OnCardAnimationStart} onClick={OnCardClicked(countdown.CardType)}>
+		<CountdownCardStyle sx={{animationDelay: animationDelay}} className={opacityClass} onAnimationStart={OnCardAnimationStart}>
 			<Box sx={{height: '100%'}}>
-				{
-					countdown.CardType === COUNTDOWN_CARD_TYPE_COUNTDOWN &&
-					<>
-						<CountdownImage component={"img"} src={countdown.Image} title={countdown.Name} />
-						<CardContent>
-							<Typography variant={"h6"} fontWeight={"bold"}>{countdown.Name}</Typography>
-							<Typography fontStyle={"italic"}>{countdown.Date}</Typography>
-							<Typography>{countdown.Description?.length > descLength ? `${countdown.Description.substring(0, descLength)}...` : countdown.Description}</Typography>
-						</CardContent>
-					</>
-				}
-				{
-					countdown.CardType === COUNTDOWN_CARD_TYPE_ADD &&
-					<AddCardContent>
-						<AddIcon />
-					</AddCardContent>
-				}
+				<>
+					<CountdownImage component={"img"} src={countdown.Image} title={countdown.Name} />
+					<CardContent>
+						<Typography variant={"h6"} fontWeight={"bold"}>{countdown.Name}</Typography>
+						<Typography fontStyle={"italic"}>{countdown.Date}</Typography>
+						<Typography>{countdown.Description?.length > descLength ? `${countdown.Description.substring(0, descLength)}...` : countdown.Description}</Typography>
+					</CardContent>
+				</>
 			</Box>
-			{
-				countdown.CardType === COUNTDOWN_CARD_TYPE_COUNTDOWN &&
-				<CardActions>
-					<Stack direction={"row"} gap={1} justifyContent={"space-between"} width={"100%"}>
-						<Box>
-							<Tooltip title={"Copy update command"}>
-								<IconButton color={"primary"} onClick={OnEditClicked(countdown.Name)}>
-									<EditIcon />
-								</IconButton>
-							</Tooltip>
-							<Tooltip title={"Copy delete command"}>
-								<IconButton color={"primary"} onClick={OnDeleteClicked(countdown.Name)}>
-									<DeleteIcon />
-								</IconButton>
-							</Tooltip>
-						</Box>
-						{
-							countdown.URL?.length > 0 &&
-							<Tooltip title={"Visit Countdown URL"}>
-								<IconButton color={"primary"} onClick={OnLinkClicked(countdown.URL)}>
-									<LinkIcon />
-								</IconButton>
-							</Tooltip>
-						}
-					</Stack>
-				</CardActions>
-			}
+			<CardActions>
+				<Stack direction={"row"} gap={1} justifyContent={"space-between"} width={"100%"}>
+					<Box>
+						<Tooltip title={"Copy update command"}>
+							<IconButton color={"primary"} onClick={OnEditClicked(countdown.Name)}>
+								<EditIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title={"Copy delete command"}>
+							<IconButton color={"primary"} onClick={OnDeleteClicked(countdown.Name)}>
+								<DeleteIcon />
+							</IconButton>
+						</Tooltip>
+					</Box>
+					{
+						countdown.URL?.length > 0 &&
+						<Tooltip title={"Visit Countdown URL"}>
+							<IconButton color={"primary"} onClick={OnLinkClicked(countdown.URL)}>
+								<LinkIcon />
+							</IconButton>
+						</Tooltip>
+					}
+				</Stack>
+			</CardActions>
 		</CountdownCardStyle>
 	)
 }
