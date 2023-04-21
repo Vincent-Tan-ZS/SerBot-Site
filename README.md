@@ -1,3 +1,7 @@
+## 2.1
+- Updated Countdowns page for mobile (and some animation)
+- Updated homepage to show what's new with the bot and the site!
+
 ## v2.0
 - Added Countdowns List page
 
