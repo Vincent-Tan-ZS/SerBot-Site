@@ -3,13 +3,14 @@ import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
 import {GetNumberOfPages} from "../../Utils";
-import {Box, Grid, Stack} from "@mui/material";
+import {Box, Grid, Stack, useMediaQuery} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
 import {differenceInDays, format} from "date-fns";
 import CountdownCard from "../../components/CountdownCard";
+import {MobileContext} from "../../contexts/MobileContext";
 
-const noOfColumns = 4;
+const noOfCards = 4;
 const helperText = "Search for a specific Countdown via Name";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
@@ -17,6 +18,8 @@ const fetcher = (...args) => fetch(...args).then(res => res.json());
 function Countdowns ()
 {
 	const { data, isValidating } = useSWRImmutable("/api/countdowns", fetcher)
+	const isMobile = React.useContext(MobileContext);
+
 	const [countdownList, setCountdownList] = React.useState([]);
 
 	// Filter States
@@ -42,7 +45,7 @@ function Countdowns ()
 					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
 				}
 			});
-			_numberOfPages = GetNumberOfPages(_list, noOfColumns);
+			_numberOfPages = GetNumberOfPages(_list, noOfCards);
 		}
 
 		setCountdownList(_list);
@@ -62,7 +65,7 @@ function Countdowns ()
 		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()));
 
 		let _pageList = GetPageList(_filtered, 1);
-		let _numberOfPages = GetNumberOfPages(_filtered, noOfColumns);
+		let _numberOfPages = GetNumberOfPages(_filtered, noOfCards);
 
 		setCurPage(1);
 		setNumberOfPages(_numberOfPages);
@@ -70,7 +73,7 @@ function Countdowns ()
 	}, [filterText]);
 
 	const GetPageList = (_list, _page = curPage) => {
-		return _list.slice((_page - 1) * noOfColumns, _page * noOfColumns);
+		return _list.slice((_page - 1) * noOfCards, _page * noOfCards);
 	}
 
 	return (
@@ -83,7 +86,7 @@ function Countdowns ()
 						</HeaderBox>
 						<Box height={"100%"} style={{marginLeft: '32px', marginRight: '32px'}}>
 							{
-								<Grid container spacing={3}>
+								<Grid container spacing={3} direction={isMobile === true ? "column" : "row"}>
 									{
 										pageList.map((c, ind) => {
 											return (

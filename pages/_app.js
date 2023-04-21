@@ -6,8 +6,12 @@ import {SNACKBAR_SEVERITY_INFO} from '../Utils';
 import BaseModal from '../components/BaseModal';
 import {ModalContext} from '../contexts/ModalContext';
 import {SnackbarContext} from '../contexts/SnackbarContext';
+import {MobileContext} from '../contexts/MobileContext';
+import {useMediaQuery} from '@mui/material';
 
 function MyApp({ Component, pageProps }) {
+	const isMobile = useMediaQuery("(max-width:600px)");
+
   // Snackbar
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarText, setSnackbarText] = React.useState("");
@@ -28,7 +32,7 @@ function MyApp({ Component, pageProps }) {
   }
 
   return (
-    <>
+    <MobileContext.Provider value={isMobile}>
       <Loading />
       <MainSnackbar open={snackbarOpen} onClose={OnSnackbarClose} text={snackbarText} severity={snackbarSeverity} />
       
@@ -41,7 +45,7 @@ function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         </ModalContext.Provider>
       </SnackbarContext.Provider>
-    </>
+    </MobileContext.Provider>
   )
 }
 

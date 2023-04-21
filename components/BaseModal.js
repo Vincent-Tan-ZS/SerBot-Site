@@ -46,9 +46,12 @@ export default function BaseModal(props) {
 
 	return (
 		<StyledDialog open={Boolean(open)} onClose={OnClose} maxWidth={maxWidth ?? "lg"} fullWidth>
-			<DialogTitle>
-				{title}
-			</DialogTitle>
+			{
+				title?.length > 0 &&
+				<DialogTitle>
+					{title}
+				</DialogTitle>
+			}
 			<DialogContent>
 				{children}
 			</DialogContent>
