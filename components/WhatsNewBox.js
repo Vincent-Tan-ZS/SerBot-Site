@@ -33,7 +33,7 @@ export default function WhatsNewBox(props) {
 
 	return (
 		<Box>
-			<Typography variant={"h4"}>What's New: {title}</Typography>
+			<Typography variant={"h4"}>What&apos;s New: {title}</Typography>
 			<WhatsNewListPaper>
 				<List>
 					{

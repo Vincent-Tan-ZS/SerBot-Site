@@ -1,3 +1,6 @@
+## 2.1.1
+- Fix build issue
+
 ## 2.1
 - Updated Countdowns page for mobile (and some animation)
 - Updated homepage to show what's new with the bot and the site!
