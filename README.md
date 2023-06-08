@@ -1,3 +1,6 @@
+## 2.2.1 
+- Updated favicon
+
 ## 2.2
 - Added favicon (ugly af though)
 - Added title to pages

@@ -49,8 +49,6 @@ function MyApp({ Component, pageProps }) {
     setTitle(_title);
   }, [Component.name]);
 
-  console.log(Component.name);
-
   return (
     <>
       <Helmet>
