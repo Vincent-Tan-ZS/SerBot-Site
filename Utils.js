@@ -1,3 +1,9 @@
+export const Settings = {
+	PAGE_TITLE_HOME: "SerBot Site",  
+	PAGE_TITLE_COMMANDS: "SerBot - Commands",  
+	PAGE_TITLE_COUNTDOWNS: "SerBot - Countdowns",  
+}
+
 export const SNACKBAR_SEVERITY_WARNING = "warning";
 export const SNACKBAR_SEVERITY_INFO = "info";
 export const SNACKBAR_SEVERITY_SUCCESS = "success";

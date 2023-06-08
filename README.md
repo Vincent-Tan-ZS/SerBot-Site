@@ -1,3 +1,7 @@
+## 2.2
+- Added favicon (ugly af though)
+- Added title to pages
+
 ## 2.1.1
 - Fix build issue
 
