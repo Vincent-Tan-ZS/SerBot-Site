@@ -8,7 +8,7 @@ export const ConnectDB = async() => {
     try
     {
         dbConn = await mongoose.connect(
-            `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/?retryWrites=true&w=majority`, {
+            `mongodb+srv://${process.env.NEXT_PUBLIC_MONGO_USER}:${process.env.NEXT_PUBLIC_MONGO_PASSWORD}@${process.env.NEXT_PUBLIC_MONGO_CLUSTER}/?retryWrites=true&w=majority`, {
                 keepAlive: true,
                 dbName: "SerBot"
             }
