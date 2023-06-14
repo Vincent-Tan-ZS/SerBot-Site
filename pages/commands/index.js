@@ -21,7 +21,7 @@ function Commands() {
 	const modalStates = React.useContext(ModalContext);
 
 	// List States
-	const { data, isValidating } = useSWRImmutable(`https://${process.env.VERCEL_URL}/api/command`, fetcher)
+	const { data, isValidating } = useSWRImmutable(`${process.env.MONGO_CLUSTER}/api/command`, fetcher)
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States
