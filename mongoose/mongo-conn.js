@@ -5,13 +5,16 @@ let dbConn = null;
 export const ConnectDB = async() => {
     if (dbConn !== null) return;
 
+    const mongoURI = process.env.MONGODB_URI;
+
+    const url = mongoURI !== undefined
+        ? mongoURI
+        :  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/?retryWrites=true&w=majority`;
+
     try
     {
-        console.log(process.env.NEXT_PUBLIC_MONGO_USER);
-        console.log(process.env.NEXT_PUBLIC_MONGO_CLUSTER);
-
         dbConn = await mongoose.connect(
-            `mongodb+srv://${process.env.NEXT_PUBLIC_MONGO_USER}:${process.env.NEXT_PUBLIC_MONGO_PASSWORD}@${process.env.NEXT_PUBLIC_MONGO_CLUSTER}/?retryWrites=true&w=majority`, {
+            url, {
                 keepAlive: true,
                 dbName: "SerBot"
             }
