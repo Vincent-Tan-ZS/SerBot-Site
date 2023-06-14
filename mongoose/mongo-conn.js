@@ -7,6 +7,9 @@ export const ConnectDB = async() => {
 
     try
     {
+        console.log(process.env.NEXT_PUBLIC_MONGO_USER);
+        console.log(process.env.NEXT_PUBLIC_MONGO_CLUSTER);
+
         dbConn = await mongoose.connect(
             `mongodb+srv://${process.env.NEXT_PUBLIC_MONGO_USER}:${process.env.NEXT_PUBLIC_MONGO_PASSWORD}@${process.env.NEXT_PUBLIC_MONGO_CLUSTER}/?retryWrites=true&w=majority`, {
                 keepAlive: true,
