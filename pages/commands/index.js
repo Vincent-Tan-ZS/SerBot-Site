@@ -21,7 +21,7 @@ function Commands() {
 	const modalStates = React.useContext(ModalContext);
 
 	// List States
-	const { data, isValidating } = useSWRImmutable(`${process.env.NEXT_PUBLIC.MONGO_CLUSTER}/${process.env.NEXT_PUBLIC_MONGO_USER}/api/command`, fetcher)
+	const { data, isValidating } = useSWRImmutable(`${process.env.NEXT_PUBLIC_MONGO_CLUSTER}/${process.env.NEXT_PUBLIC_MONGO_USER}/api/command`, fetcher)
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States
