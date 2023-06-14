@@ -6,6 +6,7 @@ export const ConnectDB = async() => {
     if (dbConn !== null) return;
 
     const mongoURI = process.env.MONGODB_URI;
+    console.log(mongoURI);
 
     const url = mongoURI !== undefined
         ? mongoURI
