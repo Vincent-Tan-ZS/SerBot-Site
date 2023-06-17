@@ -13,15 +13,12 @@ export const ConnectDB = async() => {
 
     try
     {
-        console.log("Start connecting");
         dbConn = await mongoose.connect(
             url, {
                 keepAlive: true,
                 dbName: "SerBot"
             }
         );
-
-        console.log("Connected");
     }
     catch (e)
     {
