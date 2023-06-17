@@ -15,7 +15,6 @@ export const ConnectDB = async() => {
     {
         dbConn = await mongoose.connect(
             url, {
-                keepAlive: true,
                 dbName: "SerBot"
             }
         );
