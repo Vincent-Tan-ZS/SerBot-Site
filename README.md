@@ -1,3 +1,6 @@
+## 2.3
+- Added Sort by Release Date in Countdowns
+
 ## 2.2.1 
 - Updated favicon
 
