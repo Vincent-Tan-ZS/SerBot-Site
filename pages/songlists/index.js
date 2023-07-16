@@ -5,7 +5,7 @@ import {ExpandMore, MusicNote, MusicVideo} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
 import AuthCodeModalChild from "../../components/Modals/AuthCodeModalChild";
 import SongListModalChild from "../../components/Modals/SongListModalChild";
-import {CheckAuthCode, GetYTEmbed} from "../../Utils";
+import {CheckAuthCode, GetYTEmbed, IsValidURL} from "../../Utils";
 import useSWR from "swr";
 import MediaPopover from "../../components/MediaPopover";
 
@@ -53,7 +53,7 @@ const UserSongsAccordion = (props) => {
 								<ListItem key={`accordion-list-item-${sL.id}`}>
 									{sL.id}. {sL.song}
 									{
-										(sL.song.startsWith("http") || sL.song.startsWith("www")) &&
+										IsValidURL(sL.song) &&
 										<>
 											&nbsp;
 											<IconButton onClick={OnMusicVideoClicked(sL.song)}>

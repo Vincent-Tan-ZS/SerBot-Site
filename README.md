@@ -1,3 +1,6 @@
+## 2.4.2
+- Refactor url check
+
 ## 2.4.1
 - Show ID of song
 

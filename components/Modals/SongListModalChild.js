@@ -3,7 +3,7 @@ import AppTableContainer from "../AppTableContainer";
 import React from "react";
 import axios from "axios";
 import {MusicVideo} from "@mui/icons-material";
-import {GetYTEmbed, SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
+import {GetYTEmbed, IsValidURL, SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
 import MediaPopover from "../MediaPopover";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
 
@@ -107,7 +107,7 @@ export default function SongListModalChild(props) {
 										<TableCell>
 											{l.song}
 											{
-												(l.song.startsWith("http") || l.song.startsWith("www")) &&
+												IsValidURL(l.song) &&
 												<>
 													&nbsp;
 													<IconButton onClick={OnMusicVideoClicked(l.song)}>

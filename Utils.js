@@ -96,3 +96,15 @@ export const GetYTEmbed = (link) => {
 	
 	return `https://www.youtube.com/embed/${ytId}?autoplay=1`;
 }
+
+export const IsValidURL = (str) => {
+	try
+	{
+		new URL(str);
+		return true;
+	}
+	catch (e)
+	{
+		return false;
+	}
+}
