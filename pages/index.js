@@ -1,7 +1,7 @@
-import {Box, Button, Stack, styled, Typography} from "@mui/material";
-import Link from "next/link";
+import {Box, Grid, styled} from "@mui/material";
 import AppBody from "../components/AppBody";
-import { ViewList as ViewListIcon, HourglassBottom as HourglassBottomIcon } from "@mui/icons-material";
+import WhatsNewBox from "../components/WhatsNewBox";
+import useSWRImmutable from "swr/immutable";
 
 const HeaderBox = styled(Box)`
   display: flex;
@@ -11,31 +11,24 @@ const HeaderBox = styled(Box)`
   flex-direction: column;
 `;
 
+const fetcher = (...args) => fetch(...args).then(res => res.json());
+
 function Home() {
+	const { data, isValidating } = useSWRImmutable("/api/newupdates", fetcher);
+
   return (
     <>
       <AppBody>
         <HeaderBox>
-          <Typography variant={"h1"}>
-            W.I.P.
-          </Typography>
-          <Typography variant={"h3"}>
-            Sorry, this page is still a Work In Progress :(
-          </Typography>
-          <Stack gap={1} direction={"column"} justifyContent={"center"} alignItems={"center"}>
-            <Link href="/commands" passHref>
-              <Button variant={"contained"}>
-                <ViewListIcon />
-                &nbsp;Commands
-              </Button>
-            </Link>
-            <Link href="/countdowns" passHref>
-              <Button variant={"contained"}>
-                <HourglassBottomIcon />
-                &nbsp;Countdowns
-              </Button>
-            </Link>
-          </Stack>
+          <Box sx={{height: '100px'}}></Box>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <WhatsNewBox title={"SerBot"} data={data === undefined ? [] : data.filter(d => d.FeatureType === "SerBot")} />
+            </Grid>
+            <Grid item xs={6}>
+              <WhatsNewBox title={"Site"} data={data === undefined ? [] : data.filter(d => d.FeatureType === "Site")}  />
+            </Grid>
+          </Grid>
         </HeaderBox>
       </AppBody>
     </>

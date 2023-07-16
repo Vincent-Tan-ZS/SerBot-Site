@@ -2,14 +2,16 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {COUNTDOWN_CARD_TYPE_ADD, COUNTDOWN_CARD_TYPE_COUNTDOWN, GetNumberOfPages} from "../../Utils";
-import {Box, Grid, Stack} from "@mui/material";
+import {GetNumberOfPages} from "../../Utils";
+import {Box, Grid, IconButton, Stack, Tooltip} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
-import {differenceInDays, format} from "date-fns";
+import {differenceInDays, format, isAfter, parse} from "date-fns";
 import CountdownCard from "../../components/CountdownCard";
+import {MobileContext} from "../../contexts/MobileContext";
+import { ClearAll, Sort as SortIcon } from "@mui/icons-material";
 
-const noOfColumns = 4;
+const noOfCards = 4;
 const helperText = "Search for a specific Countdown via Name";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json());
@@ -17,6 +19,8 @@ const fetcher = (...args) => fetch(...args).then(res => res.json());
 function Countdowns ()
 {
 	const { data, isValidating } = useSWRImmutable("/api/countdowns", fetcher)
+	const isMobile = React.useContext(MobileContext);
+
 	const [countdownList, setCountdownList] = React.useState([]);
 
 	// Filter States
@@ -26,6 +30,7 @@ function Countdowns ()
 	const [curPage, setCurPage] = React.useState(1);
 	const [numberOfPages, setNumberOfPages] = React.useState(1);
 	const [pageList, setPageList] = React.useState([]);
+	const [sortByDate, setSortByDate] = React.useState(false);
 
 	React.useEffect(() => {
 		let _list = [];
@@ -39,48 +44,52 @@ function Countdowns ()
 
 				return {
 					...l,
-					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`,
-					CardType: COUNTDOWN_CARD_TYPE_COUNTDOWN
+					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
 				}
 			});
-			_numberOfPages = GetNumberOfPages(_list, noOfColumns);
+			_numberOfPages = GetNumberOfPages(_list, noOfCards);
 		}
-
-		_list.push({
-			Name: "",
-			Date: "",
-			Description: "",
-			Image: "",
-			URL: "",
-			CardType: COUNTDOWN_CARD_TYPE_ADD
-		});
 
 		setCountdownList(_list);
 		setNumberOfPages(_numberOfPages);
+		setCurPage(1);
 	}, [data]);
 
 	React.useEffect(() => {
 		if (countdownList.length <= 0) return;
 
-		let _pageList = GetPageList(countdownList);
-		setPageList(_pageList);
-	}, [countdownList, curPage]);
+		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()));
 
-	React.useEffect(() => {
-		if (countdownList.length <= 0) return;
+		if (sortByDate === true)
+		{
+			const ConvertDate = (date) => {
+				let index = date.indexOf(" (");
+				let dateStr = date.substring(0, index);
 
-		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()) || c.CardType === COUNTDOWN_CARD_TYPE_ADD);
+				return parse(dateStr, "d MMMM y", new Date());
+			}
 
-		let _pageList = GetPageList(_filtered, 1);
-		let _numberOfPages = GetNumberOfPages(_filtered, noOfColumns);
+			_filtered = _filtered.sort((a, b) => {
+				let aDate = ConvertDate(a.Date);
+				let bDate = ConvertDate(b.Date);
 
-		setCurPage(1);
+				return isAfter(aDate, bDate) ? 1 : -1;
+			});
+		}
+
+		let _pageList = GetPageList(_filtered);
+		let _numberOfPages = GetNumberOfPages(_filtered, noOfCards);
+
 		setNumberOfPages(_numberOfPages);
 		setPageList(_pageList);
-	}, [filterText]);
+	}, [countdownList, filterText, sortByDate, curPage]);
 
 	const GetPageList = (_list, _page = curPage) => {
-		return _list.slice((_page - 1) * noOfColumns, _page * noOfColumns);
+		return _list.slice((_page - 1) * noOfCards, _page * noOfCards);
+	}
+
+	const OnSortClicked = () => {
+		setSortByDate(!sortByDate);
 	}
 
 	return (
@@ -90,10 +99,22 @@ function Countdowns ()
 					<Stack spacing={2} overflow={'auto'} height={"100%"}>
 						<HeaderBox>
 							<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
+							<Tooltip title={sortByDate === true ? "Unsort" : "Sort by release date"} placement="top">
+								<IconButton sx={{marginLeft: 1}} onClick={OnSortClicked}>
+									{
+										sortByDate &&
+										<ClearAll fontSize={"large"} color={"info"} />
+									}
+									{
+										!sortByDate &&
+										<SortIcon fontSize={"large"} color={"info"} />
+									}
+								</IconButton>
+							</Tooltip>
 						</HeaderBox>
 						<Box height={"100%"} style={{marginLeft: '32px', marginRight: '32px'}}>
 							{
-								<Grid container spacing={3}>
+								<Grid container spacing={3} direction={isMobile === true ? "column" : "row"}>
 									{
 										pageList.map((c, ind) => {
 											return (

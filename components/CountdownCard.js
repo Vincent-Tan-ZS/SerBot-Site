@@ -1,22 +1,22 @@
 
 import React from "react";
-import {Box, Card, CardActions, CardContent, CardMedia, IconButton, Stack, Tooltip, Typography, keyframes, styled} from "@mui/material";
-import {Link as LinkIcon, Delete as DeleteIcon, BrokenImage as BrokenImageIcon, Edit as EditIcon, Add as AddIcon} from '@mui/icons-material';
-import {COUNTDOWN_CARD_TYPE_ADD, COUNTDOWN_CARD_TYPE_COUNTDOWN, CopyToClipboard} from "../Utils";
+import {Box, Card, CardActions, CardContent, CardMedia, IconButton, Stack, Tooltip, Typography, css, keyframes, styled} from "@mui/material";
+import {Link as LinkIcon, Delete as DeleteIcon, BrokenImage as BrokenImageIcon, Edit as EditIcon} from '@mui/icons-material';
+import {CopyToClipboard} from "../Utils";
 import { zoomIn } from "react-animations";
 import {SnackbarContext} from "../contexts/SnackbarContext";
+import {MobileContext} from "../contexts/MobileContext";
 import {ModalContext} from "../contexts/ModalContext";
-import AddCountdownModalContent from "./Modals/AddCountdownModalContent";
+import MobileCardClickedModalChild from "./Modals/MobileCardClickedModalChild";
 
 const descLength = 300;
 const cardMediaHeight = '140px';
 const zoomInAnimation = keyframes`${zoomIn}`;
 
-const CountdownCardStyle = styled(Card)`
+const BaseCardStyle = css`
 	box-shadow: 0px 0px 8px 4px #0E4686;
 	background-color: #24252C;
 	color: white;
-	height: 500px;
 
 	&.hide {
 		opacity: 0%;
@@ -24,10 +24,6 @@ const CountdownCardStyle = styled(Card)`
 
 	&.show {
 		opacity: 100%;
-	}
-
-	&.clickable {
-		cursor: pointer;
 	}
 
 	animation: 0.2s ${zoomInAnimation} forwards;
@@ -38,6 +34,21 @@ const CountdownCardStyle = styled(Card)`
 
 	:hover {
 		box-shadow: 0px 0px 8px 8px #3e6a9e;
+	}
+`;
+
+const CountdownCardStyle = styled(Card) `
+	${BaseCardStyle}
+	height: 500px;
+
+	.CardTopBody-root {
+		height: 100%;
+	}
+
+	.CountdownImage-root {
+		display: block;
+		padding: 4px;
+		background: #303436
 	}
 
 	.MuiCardMedia-root {
@@ -50,43 +61,45 @@ const CountdownCardStyle = styled(Card)`
 	}
 `;
 
-const AddCardContent = styled(CardContent)(({ theme }) => `
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+const MobileCountdownCardStyle = styled(Card) `
+	${BaseCardStyle}
+	height: 100px;
 
-	.MuiSvgIcon-root {
-		font-size: 4rem;
-		transition: font-size 0.2s;
-		color: ${theme.palette.primary.main};
+	.CardTopBody-root {
+		display: flex;
 	}
 
-	:hover {
-		.MuiSvgIcon-root {
-			font-size: 5rem;
-			color: ${theme.palette.primary.light};
-		}
+	.CountdownImage-root {
+		display: flex;
+		height: 100%;
+		width: 30%;
 	}
-`)
 
-const CountdownImage = (props) => {
-	let spanStyle = {
-		display: 'block',
-		padding: '4px',
-		background: '#303436'
-	};
+	.MuiCardContent-root {
+		width: 70%;
+	}
+`;
 
-	// if (props.src.length > 0)
-	// {
-	// 	spanStyle.background = `url(${props.src})`;
-	// 	spanStyle.backgroundSize = '300px 100px';
-	// 	spanStyle.backgroundPositionX = 'center';
-	// 	spanStyle.backgroundPositionY = 'center';
-	// }
+const VariedCountdownCard = (props) => {
+	const isMobile = React.useContext(MobileContext);
 
 	return (
-		<span style={spanStyle}>
+		<>
+			{
+				isMobile === true &&
+				<MobileCountdownCardStyle {...props} />
+			}
+			{
+				isMobile !== true &&
+				<CountdownCardStyle {...props} />
+			}
+		</>
+	)
+}
+
+const CountdownImage = (props) => {
+	return (
+		<span className="CountdownImage-root">
 			{
 				props.src?.length > 0 &&
 				<CardMedia {...props} />
@@ -103,9 +116,10 @@ const CountdownImage = (props) => {
 }
 
 export default function CountdownCard(props) {
-	const { countdown, animationDelay, name } = props;
+	const { countdown, animationDelay } = props;
 	const snackbarStates = React.useContext(SnackbarContext);
 	const modalStates = React.useContext(ModalContext);
+	const isMobile = React.useContext(MobileContext);
 
 	const [opacityClass, setOpacityClass] = React.useState("hide");
 
@@ -125,37 +139,25 @@ export default function CountdownCard(props) {
 		setOpacityClass("show");
 	}
 
-	const OnCardClicked = (cardType) => () => {
-		if (cardType !== COUNTDOWN_CARD_TYPE_ADD) return;
+	const OnCardClicked = () => {
+		if (isMobile !== true) return;
 
 		modalStates.setModalOpen(true);
-		modalStates.setModalTitle("Add Countdown");
-		modalStates.setModalChildren(<AddCountdownModalContent name={name} />);
+		modalStates.setModalChildren(<MobileCardClickedModalChild name={countdown.Name} link={countdown.URL} />);
 	}
 
 	return (
-		<CountdownCardStyle sx={{animationDelay: animationDelay}} className={`${opacityClass} ${countdown.CardType === COUNTDOWN_CARD_TYPE_ADD && "clickable"}`} onAnimationStart={OnCardAnimationStart} onClick={OnCardClicked(countdown.CardType)}>
-			<Box sx={{height: '100%'}}>
-				{
-					countdown.CardType === COUNTDOWN_CARD_TYPE_COUNTDOWN &&
-					<>
-						<CountdownImage component={"img"} src={countdown.Image} title={countdown.Name} />
-						<CardContent>
-							<Typography variant={"h6"} fontWeight={"bold"}>{countdown.Name}</Typography>
-							<Typography fontStyle={"italic"}>{countdown.Date}</Typography>
-							<Typography>{countdown.Description?.length > descLength ? `${countdown.Description.substring(0, descLength)}...` : countdown.Description}</Typography>
-						</CardContent>
-					</>
-				}
-				{
-					countdown.CardType === COUNTDOWN_CARD_TYPE_ADD &&
-					<AddCardContent>
-						<AddIcon />
-					</AddCardContent>
-				}
+		<VariedCountdownCard sx={{animationDelay: animationDelay}} className={opacityClass} onAnimationStart={OnCardAnimationStart} onClick={OnCardClicked}>
+			<Box className={"CardTopBody-root"}>
+				<CountdownImage component={"img"} src={countdown.Image} title={countdown.Name} />
+				<CardContent>
+					<Typography variant={"h6"} fontWeight={"bold"}>{countdown.Name}</Typography>
+					<Typography fontStyle={"italic"}>{countdown.Date}</Typography>
+					<Typography>{countdown.Description?.length > descLength ? `${countdown.Description.substring(0, descLength)}...` : countdown.Description}</Typography>
+				</CardContent>
 			</Box>
 			{
-				countdown.CardType === COUNTDOWN_CARD_TYPE_COUNTDOWN &&
+				isMobile !== true &&
 				<CardActions>
 					<Stack direction={"row"} gap={1} justifyContent={"space-between"} width={"100%"}>
 						<Box>
@@ -181,6 +183,6 @@ export default function CountdownCard(props) {
 					</Stack>
 				</CardActions>
 			}
-		</CountdownCardStyle>
+		</VariedCountdownCard>
 	)
 }

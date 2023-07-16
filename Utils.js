@@ -1,10 +1,25 @@
+export const Settings = {
+	PAGE_TITLE_HOME: "SerBot Site",  
+	PAGE_TITLE_COMMANDS: "SerBot - Commands",  
+	PAGE_TITLE_COUNTDOWNS: "SerBot - Countdowns",  
+}
+
 export const SNACKBAR_SEVERITY_WARNING = "warning";
 export const SNACKBAR_SEVERITY_INFO = "info";
 export const SNACKBAR_SEVERITY_SUCCESS = "success";
 export const SNACKBAR_SEVERITY_ERROR = "error";
 
-export const COUNTDOWN_CARD_TYPE_COUNTDOWN = "countdown";
-export const COUNTDOWN_CARD_TYPE_ADD = "countdown_add";
+export const SelectMenuProps = {
+	MenuListProps: {
+		sx: {
+			background: '#121216',
+			color: 'white',
+			'.MuiMenuItem-root:hover': {
+				background: '#19191e'
+			}
+		}
+	}
+};
 
 export const CopyToClipboard = (snackbarStates, text) => {
 	let _msg = "";
