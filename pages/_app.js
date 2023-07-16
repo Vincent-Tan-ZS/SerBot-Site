@@ -2,13 +2,14 @@ import React from 'react';
 import Loading from '../components/Loading'
 import MainSnackbar from '../components/MainSnackbar'
 import '../styles/globals.css'
-import {SNACKBAR_SEVERITY_INFO, Settings} from '../Utils';
+import {CheckAuthCode, SNACKBAR_SEVERITY_INFO, Settings} from '../Utils';
 import BaseModal from '../components/BaseModal';
 import {ModalContext} from '../contexts/ModalContext';
 import {SnackbarContext} from '../contexts/SnackbarContext';
 import {MobileContext} from '../contexts/MobileContext';
 import {useMediaQuery} from '@mui/material';
 import {Helmet} from 'react-helmet';
+import {isAfter} from 'date-fns';
 
 function MyApp({ Component, pageProps }) {
 	const isMobile = useMediaQuery("(max-width:600px)");
@@ -27,9 +28,11 @@ function MyApp({ Component, pageProps }) {
   const [modalTitle, setModalTitle] = React.useState("");
   const [modalMaxWidth, setModalMaxWidth] = React.useState("lg");
   const [modalChildren, setModalChildren] = React.useState(<></>);
+  const [modalHeight, setModalHeight] = React.useState("auto");
 
   const OnModalClosed = () => {
     setModalOpen(false);
+    setModalHeight("auto");
   }
 
   // Title
@@ -49,6 +52,10 @@ function MyApp({ Component, pageProps }) {
     setTitle(_title);
   }, [Component.name]);
 
+  React.useEffect(() => {
+    CheckAuthCode();
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -60,10 +67,10 @@ function MyApp({ Component, pageProps }) {
         
         
         <SnackbarContext.Provider value={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}}>
-          <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth}>
-            {modalChildren}
-          </BaseModal>
-          <ModalContext.Provider value={{setModalOpen, setModalTitle, setModalMaxWidth, setModalChildren,}}>
+          <ModalContext.Provider value={{setModalOpen, setModalTitle, setModalMaxWidth, setModalChildren, setModalHeight}}>
+            <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth} height={modalHeight}>
+              {modalChildren}
+            </BaseModal>
             <Component {...pageProps} />
           </ModalContext.Provider>
         </SnackbarContext.Provider>

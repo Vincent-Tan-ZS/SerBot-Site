@@ -5,35 +5,46 @@ import { ConnectDB } from "../../mongoose/mongo-conn";
 const handler = async (req, res) => {
 	if (req.method !== "POST")
 	{
-		res.status(405).send({message: "Only POST requests allowed"});
+		res.status(405).json({message: "Only POST requests allowed"});
 		return;
 	}
 
 	await ConnectDB();
 
-	const body = JSON.parse(req.body);
-	const { userId, username, userImage, song } = body;
+	const { userId, username, song } = req.body;
 
 	const userSongList = await UserSongListModel.findOne({ UserId: userId });
+
+	let newSong = {
+		id: 1,
+		song: song
+	};
 
 	// List exists
 	if (userSongList !== null && userSongList !== undefined)
 	{
-		userSongList.SongList.push(song);
+		if (userSongList.SongList.findIndex(s => s.song === song) >= 0)
+		{
+			res.status(400).json({message: "Song already exists in this list!"});
+			return;
+		}
+
+		newSong.id = userSongList.SongList.length + 1;
+
+		userSongList.SongList.push(newSong);
 		userSongList.save();
 	}
 	else
 	{
-		const newSongList = new userSongListSchema({
+		const newSongList = new UserSongListModel({
 			UserId: userId,
 			UserName: username,
-			UserImage: userImage,
-			SongList: [song]
+			SongList: [newSong]
 		});
 		newSongList.save();
 	}
 
-	res.status(200).send({message: "OK"});
+	res.status(200).json({message: "OK"});
 }
 
 export default handler;

@@ -6,6 +6,10 @@ const siteAuthorizationSchema = Schema({
         type: String,
         required: true
     },
+    UserName: {
+        type: String,
+        required: true
+    },
     AuthCode: {
         type: String,
         required: true

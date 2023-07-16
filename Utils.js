@@ -1,3 +1,5 @@
+import {isAfter} from "date-fns";
+
 export const Settings = {
 	PAGE_TITLE_HOME: "SerBot Site",  
 	PAGE_TITLE_COMMANDS: "SerBot - Commands",  
@@ -73,4 +75,24 @@ export const ChunkArray = (list, chunkSize) => {
 		prev[chunkIndex].push(cur);
 		return prev;
 	}, []);
+}
+
+export const CheckAuthCode = () => {
+	const sessionExpiration = sessionStorage.getItem("DiscordUserExpiresOn");
+    if (sessionExpiration !== undefined || sessionExpiration !== null)
+    {
+      if (isAfter(new Date(), new Date(sessionExpiration)))
+      {
+        sessionStorage.removeItem("DiscordUserId");
+        sessionStorage.removeItem("DiscordUserName");
+        sessionStorage.removeItem("DiscordUserExpiresOn");
+      }
+    }
+}
+
+export const GetYTEmbed = (link) => {
+	const _url = new URL(link);
+	const ytId = _url.searchParams.get("v");
+	
+	return `https://www.youtube.com/embed/${ytId}?autoplay=1`;
 }

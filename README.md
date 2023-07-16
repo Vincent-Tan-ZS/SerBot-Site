@@ -1,3 +1,6 @@
+## 2.4
+- Added Song List page
+
 ## 2.3
 - Added Sort by Release Date in Countdowns
 

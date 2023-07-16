@@ -1,5 +1,5 @@
 import {Dialog, DialogContent, DialogTitle, IconButton, styled} from "@mui/material";
-import { Cross as CrossIcon } from '@mui/icons-material';
+import { Cross as CrossIcon, Height } from '@mui/icons-material';
 
 const StyledDialog = styled(Dialog)(({ theme }) => `
 	.MuiPaper-root {
@@ -42,7 +42,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => `
 `);
 
 export default function BaseModal(props) {
-	const { open, OnClose, title, maxWidth, children } = props;
+	const { open, OnClose, title, maxWidth, height, children } = props;
 
 	return (
 		<StyledDialog open={Boolean(open)} onClose={OnClose} maxWidth={maxWidth ?? "lg"} fullWidth>
@@ -52,7 +52,7 @@ export default function BaseModal(props) {
 					{title}
 				</DialogTitle>
 			}
-			<DialogContent>
+			<DialogContent sx={{height: height}}>
 				{children}
 			</DialogContent>
 		</StyledDialog>

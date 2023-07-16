@@ -11,8 +11,7 @@ const handler = async (req, res) => {
 
 	await ConnectDB();
 
-	const body = JSON.parse(req.body);
-	const { userId, song } = body;
+	const { userId, songId } = req.body;
 
 	const userSongList = await UserSongListModel.findOne({ UserId: userId });
 
@@ -21,11 +20,14 @@ const handler = async (req, res) => {
 		res.status(400).send({message: "List doesn't exist, please add it"});
 	}
 
-	let index = userSongList.SongList.findIndex(s => s === song);
+	let index = userSongList.SongList.findIndex(s => s.id === songId);
 
 	if (index >= 0)
 	{
-		userSongList.SongList.slice(index, 1);
+		let songList = [...userSongList.SongList];
+		songList.splice(index, 1);
+
+		userSongList.SongList = [...songList];
 		userSongList.save();
 	}
 
