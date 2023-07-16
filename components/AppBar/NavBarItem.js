@@ -32,7 +32,7 @@ function NavBarItem(props) {
 	return (
 		<Link href={path} passHref>
 			<StyledButton hov={isHover} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} startIcon={startIcon}>
-				<Collapse in={isHover} orientation={"horizontal"}>
+				<Collapse in={isHover} orientation={"horizontal"} sx={{whiteSpace: 'nowrap'}}>
 					{label}
 				</Collapse>
 			</StyledButton>
