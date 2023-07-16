@@ -51,7 +51,7 @@ const UserSongsAccordion = (props) => {
 						songList.map((sL) => {
 							return (
 								<ListItem key={`accordion-list-item-${sL.id}`}>
-									{sL.song}
+									{sL.id}. {sL.song}
 									{
 										(sL.song.startsWith("http") || sL.song.startsWith("www")) &&
 										<>
