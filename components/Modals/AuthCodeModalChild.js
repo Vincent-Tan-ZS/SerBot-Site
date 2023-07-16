@@ -7,13 +7,17 @@ export default function AuthCodeModalChild(props) {
 	const OnAuthCodeChanged = (e) => {
 		setAuthCode(e.target.value);
 	}
+
+	const OnAuthCodeClicked = () => {
+
+	}
 	
 	return (
 		<>
 			<Stack spacing={2}>
 				<Typography variant="h5" color={"white"}>Please enter the Authentication Code given by SerBot</Typography>
 				<TextField size="small" label={"Authentication Code"} value={authCode} onChange={OnAuthCodeChanged}/>
-				<Button variant={"contained"} disabled={authCode.length <= 0}>Continue</Button>
+				<Button variant={"contained"} disabled={authCode.length <= 0} onClick={OnAuthCodeClicked}>Continue</Button>
 			</Stack>
 		</>
 	)
