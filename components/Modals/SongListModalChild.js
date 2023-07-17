@@ -44,10 +44,10 @@ export default function SongListModalChild(props) {
 		}).then((res) => {
 			refresh();
 
-			let _list = [...songList];
+			let _list = songList === undefined ? [] : [...songList];
 
 			_list.push({
-				id: list.length + 1,
+				id: _list.length + 1,
 				song: newSong
 			});
 
@@ -55,6 +55,7 @@ export default function SongListModalChild(props) {
 
 			setNewSong("");
 		}).catch((err) => {
+			console.log(err);
 			SetSnackbarOpen(snackbarStates, true);
 			SetSnackbarSeverity(snackbarStates, SNACKBAR_SEVERITY_ERROR);
 			SetSnackbarText(snackbarStates, err.response.data.message);

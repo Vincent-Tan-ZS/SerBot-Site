@@ -6,6 +6,10 @@ const userSongListSchema = Schema({
         type: String,
         required: true
     },
+    UserName: {
+        type: String,
+        required: true
+    },
     SongList: {
         type: Array,
         required: true
