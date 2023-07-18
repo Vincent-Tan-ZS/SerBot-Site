@@ -1,3 +1,7 @@
+## 2.4.5
+- Added cancel for update song
+- Disable Delete All if no songs
+
 ## 2.4.4
 - Added Delete All button for Song List
 - Added Edit button for Song List

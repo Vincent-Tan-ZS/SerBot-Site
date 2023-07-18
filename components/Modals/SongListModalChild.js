@@ -2,7 +2,7 @@ import {Box, Button, IconButton, Stack, Table, TableBody, TableCell, TableHead, 
 import AppTableContainer from "../AppTableContainer";
 import React from "react";
 import axios from "axios";
-import {Add, Check, Delete, DeleteForever, Edit, MusicVideo} from "@mui/icons-material";
+import {Add, Check, Close, Delete, DeleteForever, Edit, MusicVideo} from "@mui/icons-material";
 import {GetYTEmbed, IsValidURL, SetErrorSnackbar} from "../../Utils";
 import MediaPopover from "../MediaPopover";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
@@ -128,9 +128,7 @@ export default function SongListModalChild(props) {
 		}).catch((err) => {
 			SetErrorSnackbar(snackbarStates, err.response.data.message);
 		}).finally(() => {
-			setUpdatePlaceholder("");
-			setUpdateSong("");
-			setUpdateSongId(-1);
+			OnCancelUpdateSong();
 		});
 
 		OnDeleteAllModalClosed();
@@ -167,15 +165,20 @@ export default function SongListModalChild(props) {
 		}).catch((err) => {
 			SetErrorSnackbar(snackbarStates, err.response.data.message);
 		}).finally(() => {
-			setUpdateSong("");
-			setUpdateSongId(-1);
+			OnCancelUpdateSong();
 		});
+	}
+
+	const OnCancelUpdateSong = () => {
+		setUpdateSong("");
+		setUpdatePlaceholder("");
+		setUpdateSongId(-1);
 	}
 
 	return (
 		<>
 			<Box display={"flex"} justifyContent={"flex-end"} pb={2}>
-				<Button variant={"contained"} onClick={OnDeleteAllClicked}>
+				<Button variant={"contained"} onClick={OnDeleteAllClicked} disabled={songList === undefined || songList?.length <= 0}>
 					<DeleteForever fontSize="small" />&nbsp;
 					Delete All
 				</Button>
@@ -223,21 +226,25 @@ export default function SongListModalChild(props) {
 										<TableCell>
 											{
 												updateSongId === l.id &&
-												<Button variant="contained" onClick={OnUpdateSong}>
-													<Check />
-												</Button>
+												<Stack direction={"row"} spacing={1}>
+													<Button variant="contained" onClick={OnUpdateSong} color={"success"}>
+														<Check />
+													</Button>
+													<Button variant="contained" onClick={OnCancelUpdateSong} color={"error"}>
+														<Close />
+													</Button>
+												</Stack>
 											}
 											{
 												updateSongId !== l.id &&
-												<>
+												<Stack direction={"row"} spacing={1}>
 													<Button variant="contained" onClick={OnDeleteSongClicked(l.id)}>
 														<Delete />
 													</Button>
-													&nbsp;&nbsp;
 													<Button variant="contained" onClick={OnUpdateClicked(l.id)}>
 														<Edit />
 													</Button>
-												</>
+												</Stack>
 											}
 										</TableCell>
 									</TableRow>
