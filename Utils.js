@@ -56,6 +56,12 @@ export const SetSnackbarOpen = (snackbarStates, value) => {
 	snackbarStates.setSnackbarOpen(value);
 }
 
+export const SetErrorSnackbar = (snackbarStates, message) => {
+	SetSnackbarOpen(snackbarStates, true);
+	SetSnackbarSeverity(snackbarStates, SNACKBAR_SEVERITY_ERROR);
+	SetSnackbarText(snackbarStates, message);
+}
+
 export const GetNumberOfPages = (list, rowNo, colNo) => {
 	return colNo === undefined 
 		? Math.ceil(list.length / rowNo)

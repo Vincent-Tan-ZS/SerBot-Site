@@ -1,7 +1,7 @@
-import {Accordion, AccordionDetails, AccordionSummary, Button, IconButton, List, ListItem, Stack, Typography, styled} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, IconButton, List, ListItem, Stack, Typography, styled} from "@mui/material";
 import AppBody from "../../components/AppBody";
 import React from "react";
-import {ExpandMore, MusicNote, MusicVideo} from "@mui/icons-material";
+import {ExpandMore, MusicVideo, PlaylistAdd} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
 import AuthCodeModalChild from "../../components/Modals/AuthCodeModalChild";
 import SongListModalChild from "../../components/Modals/SongListModalChild";
@@ -114,6 +114,7 @@ function SongLists(props)
 			modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} setAuthed={setAuthed} />);
 		}
 	}
+
 	
 	const OnMusicVideoClicked = (song) => (e) => {
 		setPopoverAnchor(e.currentTarget);
@@ -128,23 +129,40 @@ function SongLists(props)
 	return (
 		<>
 			<AppBody>
-				<Stack spacing={1} height='100%'>
-					<Stack direction={"row"} spacing={1} paddingTop={1} paddingBottom={1}>
-						<Button variant={"contained"} onClick={OnButtonClicked()}>
-							<MusicNote fontSize="small" />&nbsp;Add / Update my list
-						</Button>
+				{
+					isValidating === true &&
+					<Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}} >
+						<CircularProgress />
+					</Box>
+				}
+				{
+					isValidating !== true &&
+					<Stack spacing={1} height='100%'>
+						<Stack direction={"row"} spacing={1} paddingTop={1} paddingBottom={1}>
+							<Button variant={"contained"} onClick={OnButtonClicked()}>
+								<PlaylistAdd fontSize="small" />&nbsp;Add / Update my list
+							</Button>
+							{/* <Button variant={"contained"} onClick={OnImportClicked()}>
+								Import Playlist
+							</Button> */}
+						</Stack>
+						<AccordionStack spacing={1}>
+							{
+								data !== undefined &&
+								data.map((d) => {
+									return (
+										<>
+											{
+												d.SongList.length > 0 &&
+												<UserSongsAccordion key={`user-song-accordion-${d.UserName}`} username={d.UserName} songList={d.SongList} OnMusicVideoClicked={OnMusicVideoClicked} />
+											}
+										</>
+									)
+								})
+							}
+						</AccordionStack>
 					</Stack>
-					<AccordionStack spacing={1}>
-						{
-							data !== undefined &&
-							data.map((d) => {
-								return (
-									<UserSongsAccordion key={`user-song-accordion-${d.UserName}`} username={d.UserName} songList={d.SongList} OnMusicVideoClicked={OnMusicVideoClicked} />
-								)
-							})
-						}
-					</AccordionStack>
-				</Stack>
+				}
 			</AppBody>
 			<MediaPopover anchor={popoverAnchor} onClose={OnPopoverClose} link={popoverLink} />
 		</>

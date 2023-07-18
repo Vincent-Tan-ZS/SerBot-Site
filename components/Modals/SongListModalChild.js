@@ -1,11 +1,12 @@
-import {Box, Button, IconButton, Popover, Table, TableBody, TableCell, TableHead, TableRow, TextField, styled} from "@mui/material";
+import {Box, Button, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography} from "@mui/material";
 import AppTableContainer from "../AppTableContainer";
 import React from "react";
 import axios from "axios";
-import {MusicVideo} from "@mui/icons-material";
-import {GetYTEmbed, IsValidURL, SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
+import {Add, Check, Delete, DeleteForever, Edit, MusicVideo} from "@mui/icons-material";
+import {GetYTEmbed, IsValidURL, SetErrorSnackbar} from "../../Utils";
 import MediaPopover from "../MediaPopover";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
+import BaseModal from "../BaseModal";
 
 export default function SongListModalChild(props) {
 	const { refresh } = props;
@@ -16,14 +17,38 @@ export default function SongListModalChild(props) {
 	const [newSong, setNewSong] = React.useState("");
 	const [songList, setSongList] = React.useState(list);
 
+	const [updateSongId, setUpdateSongId] = React.useState(-1);
+	const [updateSong, setUpdateSong] = React.useState("");
+	const [updatePlaceholder, setUpdatePlaceholder] = React.useState("");
+
 	const [popoverAnchor, setPopoverAnchor] = React.useState(null);
 	const [popoverLink, setPopoverLink] = React.useState("");
+
+	const [deleteAllModalOpen, setDeleteAllModalOpen] = React.useState(false);
 
 	const userId = sessionStorage.getItem("DiscordUserId");
 	const userName = sessionStorage.getItem("DiscordUserName");
 
 	const OnNewSongChanged = (e) => {
 		setNewSong(e.target.value);
+	}
+
+	const OnUpdateSongChanged = (e) => {
+		setUpdateSong(e.target.value);
+	}
+
+	const OnSongKeyDown = (e) => {
+		if (e.code === "Enter")
+		{
+			OnAddSongClicked();
+		}
+	}
+
+	const OnUpdateSongKeyDown = (e) => {
+		if (e.code == "Enter")
+		{
+			OnUpdateSong();
+		}
 	}
 
 	const OnMusicVideoClicked = (song) => (e) => {
@@ -37,6 +62,12 @@ export default function SongListModalChild(props) {
 	}
 
 	const OnAddSongClicked = () => {
+		if (newSong.length <= 0)
+		{
+			SetErrorSnackbar(snackbarStates, "Song Name / URL cannot be empty!");
+			return;
+		}
+
 		axios.post(`./api/addNewSong`, {
 			userId: userId,
 			username: userName,
@@ -55,10 +86,7 @@ export default function SongListModalChild(props) {
 
 			setNewSong("");
 		}).catch((err) => {
-			console.log(err);
-			SetSnackbarOpen(snackbarStates, true);
-			SetSnackbarSeverity(snackbarStates, SNACKBAR_SEVERITY_ERROR);
-			SetSnackbarText(snackbarStates, err.response.data.message);
+			SetErrorSnackbar(snackbarStates, err.response.data.message);
 		});
 	}
 
@@ -79,19 +107,84 @@ export default function SongListModalChild(props) {
 				setSongList(_songList);
 			}
 		}).catch((err) => {
-			SetSnackbarOpen(snackbarStates, true);
-			SetSnackbarSeverity(snackbarStates, SNACKBAR_SEVERITY_ERROR);
-			SetSnackbarText(snackbarStates, err.response.data.message);
+			SetErrorSnackbar(snackbarStates, err.response.data.message);
+		});
+	}
+	
+	const OnDeleteAllClicked = () => {
+		setDeleteAllModalOpen(true);
+	}
+
+	const OnDeleteAllModalClosed = () => {
+		setDeleteAllModalOpen(false);
+	}
+
+	const OnDeleteAllConfirmed = () => {
+		axios.post(`./api/deleteAllSongs`, {
+			userId: userId
+		}).then((res) => {
+			refresh();	
+			setSongList([]);
+		}).catch((err) => {
+			SetErrorSnackbar(snackbarStates, err.response.data.message);
+		}).finally(() => {
+			setUpdatePlaceholder("");
+			setUpdateSong("");
+			setUpdateSongId(-1);
+		});
+
+		OnDeleteAllModalClosed();
+	}
+
+	const OnUpdateClicked = (songId) => (e) => {
+		const songName = songList.find((s) => Number(s.id) === Number(songId)).song;
+
+		setUpdateSongId(songId);
+		setUpdateSong(songName);
+		setUpdatePlaceholder(songName);
+	}
+
+	const OnUpdateSong = () => {
+		if (updateSong.length <= 0)
+		{
+			SetErrorSnackbar(snackbarStates, "Song Name / URL cannot be empty!");
+			return;
+		}
+
+		axios.post(`./api/updateSong`, {
+			userId: userId,
+			songId: updateSongId,
+			newSong: updateSong
+		}).then((res) => {
+			refresh();
+
+			let _list = songList === undefined ? [] : [...songList];
+			let _index = _list.findIndex((s) => Number(s.id) === Number(updateSongId));
+
+			_list[_index].song = updateSong;
+
+			setSongList(_list);
+		}).catch((err) => {
+			SetErrorSnackbar(snackbarStates, err.response.data.message);
+		}).finally(() => {
+			setUpdateSong("");
+			setUpdateSongId(-1);
 		});
 	}
 
 	return (
 		<>
+			<Box display={"flex"} justifyContent={"flex-end"} pb={2}>
+				<Button variant={"contained"} onClick={OnDeleteAllClicked}>
+					<DeleteForever fontSize="small" />&nbsp;
+					Delete All
+				</Button>
+			</Box>
 			<AppTableContainer>
 				<Table stickyHeader>
 					<colgroup>
-						<col width={"90%"} />
-						<col width={"10%"} />
+						<col width={"85%"} />
+						<col width={"15%"} />
 					</colgroup>
 					<TableHead>
 						<TableRow>
@@ -106,19 +199,46 @@ export default function SongListModalChild(props) {
 								return (
 									<TableRow key={`song-list-row-${l.id}-${l.song}`}>
 										<TableCell>
-											{l.song}
 											{
-												IsValidURL(l.song) &&
+												updateSongId === l.id &&
+												<TextField size="small" autoFocus fullWidth value={updateSong} placeholder={updatePlaceholder} onChange={OnUpdateSongChanged} onKeyDown={OnUpdateSongKeyDown}  />
+											}
+											{
+												updateSongId !== l.id &&
 												<>
-													&nbsp;
-													<IconButton onClick={OnMusicVideoClicked(l.song)}>
-														<MusicVideo />
-													</IconButton>
+													{l.song}
+													{
+														IsValidURL(l.song) &&
+														<>
+															&nbsp;
+															<IconButton onClick={OnMusicVideoClicked(l.song)}>
+																<MusicVideo />
+															</IconButton>
+														</>
+													}
 												</>
 											}
+											
 										</TableCell>
 										<TableCell>
-											<Button variant="contained" onClick={OnDeleteSongClicked(l.id)}>Delete</Button>
+											{
+												updateSongId === l.id &&
+												<Button variant="contained" onClick={OnUpdateSong}>
+													<Check />
+												</Button>
+											}
+											{
+												updateSongId !== l.id &&
+												<>
+													<Button variant="contained" onClick={OnDeleteSongClicked(l.id)}>
+														<Delete />
+													</Button>
+													&nbsp;&nbsp;
+													<Button variant="contained" onClick={OnUpdateClicked(l.id)}>
+														<Edit />
+													</Button>
+												</>
+											}
 										</TableCell>
 									</TableRow>
 								)
@@ -126,16 +246,33 @@ export default function SongListModalChild(props) {
 						}
 						<TableRow>
 							<TableCell>
-								<TextField size="small" fullWidth value={newSong} onChange={OnNewSongChanged} />
+								<TextField size="small" fullWidth value={newSong} onChange={OnNewSongChanged} onKeyDown={OnSongKeyDown} />
 							</TableCell>
 							<TableCell>
-								<Button variant="contained" onClick={OnAddSongClicked}>Add</Button>
+								<Button variant="contained" onClick={OnAddSongClicked}>
+									<Add />
+								</Button>
 							</TableCell>
 						</TableRow>
 					</TableBody>
 				</Table>
 			</AppTableContainer>
 			<MediaPopover anchor={popoverAnchor} onClose={OnPopoverClose} link={popoverLink} />
+			<BaseModal open={deleteAllModalOpen} onClose={OnDeleteAllModalClosed} title={"Delete Confirmation"} maxWidth={"xs"}>
+				<Stack spacing={4}>
+					<Typography variant={"h6"} color={"white"}>
+						Are you sure you want to clear your Song List?
+					</Typography>
+					<Stack direction={"row"} spacing={2} justifyContent={"flex-end"}>
+						<Button variant={"contained"} onClick={OnDeleteAllConfirmed}>
+							Yes
+						</Button>
+						<Button variant={"contained"} onClick={OnDeleteAllModalClosed}>
+							No
+						</Button>
+					</Stack>
+				</Stack>
+			</BaseModal>
 		</>
 	)
 }

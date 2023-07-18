@@ -1,3 +1,14 @@
+## 2.4.4
+- Added Delete All button for Song List
+- Added Edit button for Song List
+- Hitting 'Enter' while typing for Song List will add/update accordingly
+- Fix issue where empty songs can be added
+- Show Loading when list is not yet loaded
+
+## 2.4.3
+- Fix song list not showing username
+- Fix Error when new user adds a song
+
 ## 2.4.2
 - Refactor url check
 
