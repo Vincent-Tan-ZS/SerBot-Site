@@ -1,3 +1,10 @@
+## v2.4.7
+- Fix crash with private playlists
+
+## v2.4.6
+- Cleanup files
+- Added feature to import playlist from Spotify or Youtube
+
 ## v2.4.5
 - Added cancel for update song
 - Disable Delete All if no songs

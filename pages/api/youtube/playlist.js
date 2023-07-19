@@ -32,7 +32,7 @@ const handler = async (req, res) => {
 
 		const res = await ytAPI.getPlaylist(playlistId);
 		
-		if (res.videoCount <= 0) 
+		if (res === undefined || res === null || res?.videoCount <= 0) 
 		{
 			throw "No videos in the playlist or unreachable playlist";
 		}
@@ -80,6 +80,7 @@ const handler = async (req, res) => {
 	}
 	catch (err)
 	{
+		console.log(err);
 		status = 400;
 		resp.message = err;
 	}

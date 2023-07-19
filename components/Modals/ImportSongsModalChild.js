@@ -6,6 +6,13 @@ import {ModalContext} from "../../contexts/ModalContext";
 import {SetErrorSnackbar} from "../../Utils";
 import {CheckCircleTwoTone} from "@mui/icons-material";
 
+const InputPlaylist = styled(TextField)`
+	.MuiFormHelperText-root {
+		color: white;
+		font-style: italic;
+	}
+`;
+
 const PlatformRadioGroup = styled(RadioGroup)`
 	.MuiRadio-root {
 		color: white;
@@ -101,7 +108,7 @@ export default function ImportSongsModalChild(props) {
 						<FormControlLabel value="yt" control={<Radio />} label="Youtube" />
 					</PlatformRadioGroup>
 					<Stack spacing={1}>
-						<TextField label={"Playlist ID"} value={playlistId} onChange={OnPlaylistIdChanged}/>
+						<InputPlaylist label={"Playlist ID"} value={playlistId} onChange={OnPlaylistIdChanged} helperText={"The playlist has to be public"}/>
 						<Button variant={"contained"} disabled={platform.length <= 0 || playlistId.length <= 0} onClick={OnImportClicked}>Import</Button>
 					</Stack>
 				</Stack>
