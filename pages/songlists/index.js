@@ -1,13 +1,14 @@
 import {Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, IconButton, List, ListItem, Stack, Typography, styled} from "@mui/material";
 import AppBody from "../../components/AppBody";
 import React from "react";
-import {ExpandMore, MusicVideo, PlaylistAdd} from "@mui/icons-material";
+import {ExpandMore, MusicVideo, PlaylistAdd, QueuePlayNext} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
 import AuthCodeModalChild from "../../components/Modals/AuthCodeModalChild";
 import SongListModalChild from "../../components/Modals/SongListModalChild";
 import {CheckAuthCode, GetYTEmbed, IsValidURL} from "../../Utils";
 import useSWR from "swr";
 import MediaPopover from "../../components/MediaPopover";
+import ImportSongsModalChild from "../../components/Modals/ImportSongsModalChild";
 
 const UserSongsAccordionStyle = styled(Accordion)`
 	.MuiAccordionSummary-root {
@@ -80,23 +81,49 @@ function SongLists(props)
 	const modalStates = React.useContext(ModalContext);
 
 	const [authed, setAuthed] = React.useState(false);
+	const [nextModal, setNextModal] = React.useState("");
 
 	const [popoverAnchor, setPopoverAnchor] = React.useState(null);
 	const [popoverLink, setPopoverLink] = React.useState("");
 
-	React.useEffect(() => {
-		if (authed !== true) return;
-		
+	const OpenSongList = () => {
 		const userId = sessionStorage.getItem("DiscordUserId");
 
 		modalStates.setModalTitle("Song List");
 		modalStates.setModalHeight("500px");
 		modalStates.setModalChildren(<SongListModalChild list={data?.find(d => d.UserId === userId)?.SongList} refresh={mutate} />);
+	}
+
+	const OpenImportPlaylist = () => {
+		modalStates.setModalTitle("Import Playlist");
+		modalStates.setModalHeight("300px");
+		modalStates.setModalChildren(<ImportSongsModalChild refresh={mutate} />);
+	}
+
+	const OpenUserAuth = () => {
+		modalStates.setModalTitle("User Confirmation");
+		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} setAuthed={setAuthed} />);
+	}
+
+	React.useEffect(() => {
+		if (authed !== true) return;
+
+		switch (nextModal)
+		{
+			case "SongList":
+				OpenSongList();
+				break;
+			case "ImportPlaylist":
+				OpenImportPlaylist();
+				break;
+		}
+
 		setAuthed(false);
 	}, [data, authed]);
 
-	const OnButtonClicked = () => () => {
+	const OnAddUpdateSongListClicked = () => {
 		CheckAuthCode();
+		setNextModal("SongList");
 
 		modalStates.setModalOpen(true);
 
@@ -104,17 +131,31 @@ function SongLists(props)
 
 		if (userId?.length > 0)
 		{
-			modalStates.setModalTitle("Song List");
-			modalStates.setModalHeight("500px");
-			modalStates.setModalChildren(<SongListModalChild list={data?.find(d => d.UserId === userId)?.SongList} refresh={mutate} />);
+			OpenSongList();
 		}
 		else
 		{
-			modalStates.setModalTitle("User Confirmation");
-			modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} setAuthed={setAuthed} />);
+			OpenUserAuth();
 		}
 	}
 
+	const OnImportClicked = async () => {
+		CheckAuthCode();
+		setNextModal("ImportPlaylist")
+
+		modalStates.setModalOpen(true);
+
+		const userId = sessionStorage.getItem("DiscordUserId");
+
+		if (userId?.length > 0)
+		{
+			OpenImportPlaylist();
+		}
+		else
+		{
+			OpenUserAuth();
+		}
+	}
 	
 	const OnMusicVideoClicked = (song) => (e) => {
 		setPopoverAnchor(e.currentTarget);
@@ -139,12 +180,12 @@ function SongLists(props)
 					isValidating !== true &&
 					<Stack spacing={1} height='100%'>
 						<Stack direction={"row"} spacing={1} paddingTop={1} paddingBottom={1}>
-							<Button variant={"contained"} onClick={OnButtonClicked()}>
+							<Button variant={"contained"} onClick={OnAddUpdateSongListClicked}>
 								<PlaylistAdd fontSize="small" />&nbsp;Add / Update my list
 							</Button>
-							{/* <Button variant={"contained"} onClick={OnImportClicked()}>
-								Import Playlist
-							</Button> */}
+							<Button variant={"contained"} onClick={OnImportClicked}>
+								<QueuePlayNext fontSize="small" />&nbsp;Import Playlist
+							</Button>
 						</Stack>
 						<AccordionStack spacing={1}>
 							{

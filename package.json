@@ -23,7 +23,9 @@
     "react-dom": "18.2.0",
     "react-helmet": "^6.1.0",
     "sass": "^1.63.4",
-    "swr": "^2.1.5"
+    "spotify-web-api-node": "^5.0.2",
+    "swr": "^2.1.5",
+    "youtubei": "^1.1.2"
   },
   "devDependencies": {
     "eslint": "8.42.0",
