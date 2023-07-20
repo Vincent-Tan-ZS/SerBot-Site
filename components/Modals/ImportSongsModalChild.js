@@ -29,6 +29,12 @@ const ImportStates = {
 	ImportSuccess: 2,
 }
 
+const labels = {
+	"spotify": "Playlist ID",
+	"yt": "Playlist ID",
+	"apple": "Playlist ID"
+};
+
 export default function ImportSongsModalChild(props) {
 	const { refresh } = props;
 
@@ -82,6 +88,13 @@ export default function ImportSongsModalChild(props) {
 						username: userName
 					});
 					break;
+				case "apple":
+					await axios.post("./api/apple/playlist", {
+						playlistUrl: playlistId,
+						userId: userId,
+						username: userName
+					});
+					break;
 			}
 
 			refresh();
@@ -106,9 +119,10 @@ export default function ImportSongsModalChild(props) {
 					<PlatformRadioGroup value={platform} onChange={OnPlatformChanged}>
 						<FormControlLabel value="spotify" control={<Radio />} label="Spotify" />
 						<FormControlLabel value="yt" control={<Radio />} label="Youtube" />
+						<FormControlLabel value="apple" control={<Radio />} label="Apple Music" />
 					</PlatformRadioGroup>
 					<Stack spacing={1}>
-						<InputPlaylist label={"Playlist ID"} value={playlistId} onChange={OnPlaylistIdChanged} helperText={"The playlist has to be public"}/>
+						<InputPlaylist label={labels[playlistId]} value={playlistId} onChange={OnPlaylistIdChanged} helperText={"The playlist has to be public"}/>
 						<Button variant={"contained"} disabled={platform.length <= 0 || playlistId.length <= 0} onClick={OnImportClicked}>Import</Button>
 					</Stack>
 				</Stack>

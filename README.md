@@ -1,3 +1,6 @@
+## v2.4.8
+- Added Apple Music Playlist Import
+
 ## v2.4.7
 - Fix crash with private playlists
 
