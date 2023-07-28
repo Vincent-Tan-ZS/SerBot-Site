@@ -1,4 +1,4 @@
-import {Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, IconButton, List, ListItem, Stack, Typography, styled} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Button, IconButton, List, ListItem, Stack, Typography, styled} from "@mui/material";
 import AppBody from "../../components/AppBody";
 import React from "react";
 import {ExpandMore, MusicVideo, PlaylistAdd, QueuePlayNext} from "@mui/icons-material";
@@ -9,6 +9,7 @@ import {CheckAuthCode, GetYTEmbed, IsValidURL} from "../../Utils";
 import useSWR from "swr";
 import MediaPopover from "../../components/MediaPopover";
 import ImportSongsModalChild from "../../components/Modals/ImportSongsModalChild";
+import LoadingBox from "../../components/LoadingBox";
 
 const UserSongsAccordionStyle = styled(Accordion)`
 	.MuiAccordionSummary-root {
@@ -172,9 +173,7 @@ function SongLists(props)
 			<AppBody>
 				{
 					isValidating === true &&
-					<Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}} >
-						<CircularProgress />
-					</Box>
+					<LoadingBox />
 				}
 				{
 					isValidating !== true &&

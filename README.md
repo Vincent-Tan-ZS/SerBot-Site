@@ -1,3 +1,7 @@
+## v2.5
+- Added SerBot Icon to site
+- Added custom Loading images
+
 ## v2.4.8
 - Added Apple Music Playlist Import
 

@@ -9,7 +9,6 @@ import {SnackbarContext} from '../contexts/SnackbarContext';
 import {MobileContext} from '../contexts/MobileContext';
 import {useMediaQuery} from '@mui/material';
 import {Helmet} from 'react-helmet';
-import {isAfter} from 'date-fns';
 
 function MyApp({ Component, pageProps }) {
 	const isMobile = useMediaQuery("(max-width:600px)");

@@ -17,7 +17,7 @@ const StyledButton = styled(Button, {shouldForwardProp: prop => prop !== "hov"})
 `);
 
 function NavBarItem(props) {
-	const { startIcon, label, path } = props;
+	const { icon, label, path } = props;
 
 	const [isHover, setIsHover] = React.useState(false);
 
@@ -31,7 +31,7 @@ function NavBarItem(props) {
 
 	return (
 		<Link href={path} passHref>
-			<StyledButton hov={isHover} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} startIcon={startIcon}>
+			<StyledButton hov={isHover} onMouseEnter={OnMouseHover} onMouseLeave={OnMouseLeave} startIcon={icon}>
 				<Collapse in={isHover} orientation={"horizontal"} sx={{whiteSpace: 'nowrap'}}>
 					{label}
 				</Collapse>

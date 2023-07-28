@@ -1,6 +1,7 @@
-import {Backdrop, CircularProgress, styled} from "@mui/material";
+import {Backdrop, styled} from "@mui/material";
 import {useRouter} from "next/router";
 import React from "react";
+import LoadingIcon from "./LoadingIcon";
 
 const LoadingScreen = styled(Backdrop)`
 	z-index: 999999;
@@ -44,7 +45,7 @@ function Loading() {
 	return loading &&
 	(
 		<LoadingScreen open={true}>
-			<CircularProgress />
+            <LoadingIcon />
 		</LoadingScreen>
 	)
 }

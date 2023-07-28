@@ -24,3 +24,11 @@ a {
     background: black;
   }
 }
+
+@keyframes loading-keyframes {
+  0% { background: url('../public/Loading/Frame1.png');}
+  40% { background: url('../public/Loading/Frame2.png');}
+  60% { background: url('../public/Loading/Frame3.png');}
+  80% { background: url('../public/Loading/Frame4.png');}
+  100% { background: url('../public/Loading/Frame5.png');}
+}
