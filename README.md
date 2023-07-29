@@ -1,3 +1,6 @@
+## v2.5.1
+- Updated mobile navigation bar
+
 ## v2.5
 - Added SerBot Icon to site
 - Added custom Loading images
