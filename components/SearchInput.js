@@ -6,7 +6,7 @@ const SearchInputStyle = styled(TextInput)`
 	width: 80%;
 
 	.MuiInput-input {
-		height: 4rem;
+		height: 3rem;
 		font-size: 24px;
 	}
 `;

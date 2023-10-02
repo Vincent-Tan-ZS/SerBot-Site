@@ -1,6 +1,6 @@
 
 import React from "react";
-import {Box, Card, CardActions, CardContent, CardMedia, IconButton, Stack, Tooltip, Typography, css, keyframes, styled} from "@mui/material";
+import {Box, Card, CardActions, CardContent, CardMedia, Divider, IconButton, Stack, Tooltip, Typography, css, keyframes, styled} from "@mui/material";
 import {Link as LinkIcon, Delete as DeleteIcon, BrokenImage as BrokenImageIcon, Edit as EditIcon} from '@mui/icons-material';
 import {CopyToClipboard} from "../Utils";
 import { zoomIn } from "react-animations";
@@ -39,10 +39,18 @@ const BaseCardStyle = css`
 
 const CountdownCardStyle = styled(Card) `
 	${BaseCardStyle}
-	height: 500px;
+	height: 100%;
 
 	.CardTopBody-root {
-		height: 100%;
+		height: 90%;
+
+		.MuiCardContent-root {
+			display: flex;
+			flex-direction: column;
+
+			overflow-y: auto;
+			height: calc(80% - 56px);
+		}
 	}
 
 	.CountdownImage-root {
@@ -151,9 +159,14 @@ export default function CountdownCard(props) {
 			<Box className={"CardTopBody-root"}>
 				<CountdownImage component={"img"} src={countdown.Image} title={countdown.Name} />
 				<CardContent>
-					<Typography variant={"h6"} fontWeight={"bold"}>{countdown.Name}</Typography>
-					<Typography fontStyle={"italic"}>{countdown.Date}</Typography>
-					<Typography>{countdown.Description?.length > descLength ? `${countdown.Description.substring(0, descLength)}...` : countdown.Description}</Typography>
+					<Box>
+						<Typography variant={"body1"} fontWeight={"bold"}>{countdown.Name}</Typography>
+						<Typography variant="subtitle2" fontStyle={"italic"}>{countdown.Date}</Typography>
+						<Divider sx={{marginTop: 1, marginBottom: 1, background: "white"}} />
+					</Box>
+					<Box height={"100%"} overflow={"auto"}>
+						<Typography variant="caption">{countdown.Description?.length > descLength ? `${countdown.Description.substring(0, descLength)}...` : countdown.Description}</Typography>
+					</Box>
 				</CardContent>
 			</Box>
 			{

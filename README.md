@@ -1,3 +1,7 @@
+## v2.5.2
+- Fix issue with countdown descriptions going too far
+- Made countdown cards for desktop a bit clearer
+
 ## v2.5.1
 - Updated mobile navigation bar
 

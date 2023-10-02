@@ -121,11 +121,11 @@ function Countdowns ()
 							</HeaderBox>
 							<Box height={"100%"} style={{marginLeft: '32px', marginRight: '32px'}}>
 								{
-									<Grid container spacing={3} direction={isMobile === true ? "column" : "row"}>
+									<Grid container spacing={3} direction={isMobile === true ? "column" : "row"} height={isMobile === true ? "auto" : "100%"}>
 										{
 											pageList.map((c, ind) => {
 												return (
-													<Grid key={`countdown-card-${ind}-${c.Name}`} item xs={3}>
+													<Grid key={`countdown-card-${ind}-${c.Name}`} item xs={3} height={isMobile === true ? "auto" : "100%"}>
 														<CountdownCard countdown={c} animationDelay={`${(ind + 1)*0.05}s`} name={filterText} />
 													</Grid>
 												)
