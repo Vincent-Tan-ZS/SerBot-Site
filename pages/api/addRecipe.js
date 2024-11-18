@@ -24,7 +24,7 @@ const handler = async (req, res) => {
 
     const allIds = await ChefMealModel.find({}, "Id");
     const maxId = allIds.length > 0
-		? Math.max(allIds.map(x => x.Id))
+		? Math.max(...allIds.map(x => Number(x.Id)))
 		: 1;
 
     const newRecipe = new ChefMealModel({
