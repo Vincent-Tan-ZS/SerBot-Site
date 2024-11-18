@@ -56,16 +56,7 @@ export default function RecipeCard(props) {
 
 	return (
 		<RecipeCardStyle onClick={OnViewRecipe} sx={{animationDelay: animationDelay, cursor: "pointer"}} className={opacityClass} onAnimationStart={OnCardAnimationStart}>
-			<Grid container justifyContent={"space-between"}>
-				<Grid item xs={11}>
-					<Typography>{recipe.Name} <em style={{"fontSize": "12px"}}>by {recipe.AddedBy}</em></Typography>
-				</Grid>
-				<Grid item xs={1}>
-					<IconButton>
-						<Delete />
-					</IconButton>
-				</Grid>
-			</Grid>
+			<Typography>{recipe.Name} <em style={{"fontSize": "12px"}}>by {recipe.AddedBy}</em></Typography>
         </RecipeCardStyle>
 	)
 }
