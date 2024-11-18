@@ -1,9 +1,10 @@
 
 import React from "react";
-import { Card, Typography, css, keyframes, styled } from "@mui/material";
+import { Card, Grid, IconButton, Typography, css, keyframes, styled } from "@mui/material";
 import { zoomIn } from "react-animations";
 import { ModalContext } from "../contexts/ModalContext";
 import ViewRecipeModalChild from "./Modals/ViewRecipeModalChild";
+import { Delete } from "@mui/icons-material";
 
 const zoomInAnimation = keyframes`${zoomIn}`;
 
@@ -55,7 +56,16 @@ export default function RecipeCard(props) {
 
 	return (
 		<RecipeCardStyle onClick={OnViewRecipe} sx={{animationDelay: animationDelay, cursor: "pointer"}} className={opacityClass} onAnimationStart={OnCardAnimationStart}>
-			<Typography>{recipe.Name} <em style={{"fontSize": "12px"}}>by {recipe.AddedBy}</em></Typography>
+			<Grid container justifyContent={"space-between"}>
+				<Grid item xs={11}>
+					<Typography>{recipe.Name} <em style={{"fontSize": "12px"}}>by {recipe.AddedBy}</em></Typography>
+				</Grid>
+				<Grid item xs={1}>
+					<IconButton>
+						<Delete />
+					</IconButton>
+				</Grid>
+			</Grid>
         </RecipeCardStyle>
 	)
 }

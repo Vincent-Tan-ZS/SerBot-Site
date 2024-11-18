@@ -1,4 +1,4 @@
-import { Button, Chip, Divider, Grid, List, ListItem, ListItemText, Stack, TextField } from "@mui/material";
+import { Button, Chip, Divider, Grid, IconButton, List, ListItem, ListItemText, Stack, TextField } from "@mui/material";
 import React from "react";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { arrayMove, List as MovableList } from "react-movable";
@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import axios from "axios";
 import { ModalContext } from "../../contexts/ModalContext";
 import { SetErrorSnackbar } from "../../Utils";
+import { Delete } from "@mui/icons-material";
 
 const StepListItem = styled(ListItem)`
     border: 1px solid #0E4686;
@@ -69,6 +70,7 @@ export function AddRecipeModalChild(props) {
         }).finally(OnCloseModal);
     }
     
+    
 	return (
 		<>
             <Stack gap={1}>
@@ -107,7 +109,11 @@ export function AddRecipeModalChild(props) {
                                     setSteps(arrayMove(steps, oldIndex, newIndex))
                                 }
                                 renderList={({ children, props }) => <List {...props}>{children}</List>}
-                                renderItem={({ value, index, props }) => <StepListItem {...props}> <ListItemText>{index + 1}. {value}</ListItemText> </StepListItem>} 
+                                renderItem={({ value, index, props }) => <StepListItem secondaryAction={
+                                    <IconButton edge="end" aria-label="delete" onClick={OnDeleteList(steps, value, setSteps)}>
+                                      <Delete />
+                                    </IconButton>
+                                  } {...props}> <ListItemText>{index + 1}. {value}</ListItemText> </StepListItem>} 
                             />
                         </>
                     }
