@@ -85,7 +85,7 @@ export function AddRecipeModalChild(props) {
                     </Grid>
                     <div>
                         {
-                            ingredients.map((ing) => <Chip color={"info"} label={ing} size={"small"} onDelete={OnDeleteList(ingredients, ing, setIngredients)} sx={{marginRight: 1}} />)
+                            ingredients.map((ing) => <Chip key={`ing-${ing}`} color={"info"} label={ing} size={"small"} onDelete={OnDeleteList(ingredients, ing, setIngredients)} sx={{marginRight: 1}} />)
                         }
                     </div>
                 </Stack>
