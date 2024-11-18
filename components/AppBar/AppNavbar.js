@@ -1,5 +1,5 @@
-import {ViewList as ViewListIcon, HourglassBottom as HourglassBottomIcon, LibraryMusic as LibraryMusicIcon, Home as HomeIcon} from "@mui/icons-material";
-import {AppBar, Box, Button, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, styled, Toolbar, Typography, useTheme} from "@mui/material";
+import {ViewList as ViewListIcon, HourglassBottom as HourglassBottomIcon, LibraryMusic as LibraryMusicIcon, Home as HomeIcon, OutdoorGrill as OutdoorGrillIcon} from "@mui/icons-material";
+import {AppBar, Box, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Toolbar, Typography} from "@mui/material";
 import NavBarItem from "./NavBarItem";
 import IconImage from "../IconImg";
 import React from "react";
@@ -30,7 +30,8 @@ const Links = [
 	{ icon: <HomeIcon />, label: "Home", path: "/" },
 	{ icon: <ViewListIcon />, label: "Commands", path: "/commands" },
 	{ icon: <HourglassBottomIcon />, label: "Countdowns", path: "/countdowns" },
-	{ icon: <LibraryMusicIcon />, label: "Song Lists", path: "/songlists" }
+	{ icon: <LibraryMusicIcon />, label: "Song Lists", path: "/songlists" },
+	{ icon: <OutdoorGrillIcon />, label: "Meal Recipes", path: "/recipes" }
 ];
 
 function AppNavbar() {

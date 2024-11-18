@@ -23,6 +23,7 @@
     "react-animations": "^1.0.0",
     "react-dom": "18.2.0",
     "react-helmet": "^6.1.0",
+    "react-movable": "^3.3.1",
     "sass": "^1.63.4",
     "spotify-web-api-node": "^5.0.2",
     "swr": "^2.1.5",

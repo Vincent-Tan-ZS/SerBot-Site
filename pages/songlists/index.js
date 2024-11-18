@@ -103,6 +103,7 @@ function SongLists(props)
 
 	const OpenUserAuth = () => {
 		modalStates.setModalTitle("User Confirmation");
+        modalStates.setModalHeight("auto");
 		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} setAuthed={setAuthed} />);
 	}
 

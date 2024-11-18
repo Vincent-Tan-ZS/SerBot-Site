@@ -4,6 +4,7 @@ export const Settings = {
 	PAGE_TITLE_HOME: "SerBot Site",  
 	PAGE_TITLE_COMMANDS: "SerBot - Commands",  
 	PAGE_TITLE_COUNTDOWNS: "SerBot - Countdowns",  
+	PAGE_TITLE_RECIPES: "SerBot - Meal Recipes",  
 }
 
 export const SNACKBAR_SEVERITY_WARNING = "warning";

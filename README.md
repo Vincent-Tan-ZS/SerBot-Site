@@ -1,3 +1,6 @@
+## v2.6
+- Added page to view and add recipes
+
 ## v2.5.2
 - Fix issue with countdown descriptions going too far
 - Made countdown cards for desktop a bit clearer
