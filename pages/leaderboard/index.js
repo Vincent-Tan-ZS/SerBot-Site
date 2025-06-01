@@ -107,7 +107,7 @@ const MisclickLeaderboard = () => {
 							<TableBody>
 								{
 									sortedData.slice(3).map((d, index) => 
-										<TableRow>
+										<TableRow key={`ranking-row-${d.Username}`}>
 											<TableCell>{index + 3 + 1}</TableCell>
 											<TableCell>
 												<UserImage image={d.AvatarUrl} size={'2rem'} />
