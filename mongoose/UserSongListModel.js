@@ -15,5 +15,5 @@ const userSongListSchema = Schema({
         required: true
     }
 });
-
-export default models?.UserSongList || model("UserSongList", userSongListSchema, "UserSongLists");
+const collection = "UserSongLists";
+export default models?.UserSongList || model("UserSongList", userSongListSchema, collection);

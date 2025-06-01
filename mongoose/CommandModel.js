@@ -19,5 +19,5 @@ const commandSchema = Schema({
         required: true
     }
 });
-
-export default models?.Command || model("Command", commandSchema, "Commands");
+const collection = "Commands";
+export default models?.Command || model("Command", commandSchema, collection);

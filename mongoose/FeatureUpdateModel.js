@@ -15,5 +15,5 @@ const featureUpdateSchema = Schema({
         required: true
     }
 });
-
-export default models?.FeatureUpdate || model("FeatureUpdate", featureUpdateSchema, "FeatureUpdate");
+const collection = "FeatureUpdate";
+export default models?.FeatureUpdate || model("FeatureUpdate", featureUpdateSchema, collection);

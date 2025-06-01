@@ -1,4 +1,4 @@
-import {ViewList as ViewListIcon, HourglassBottom as HourglassBottomIcon, LibraryMusic as LibraryMusicIcon, Home as HomeIcon, OutdoorGrill as OutdoorGrillIcon} from "@mui/icons-material";
+import {ViewList as ViewListIcon, HourglassBottom as HourglassBottomIcon, LibraryMusic as LibraryMusicIcon, Home as HomeIcon, OutdoorGrill as OutdoorGrillIcon, Leaderboard} from "@mui/icons-material";
 import {AppBar, Box, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Toolbar, Typography} from "@mui/material";
 import NavBarItem from "./NavBarItem";
 import IconImage from "../IconImg";
@@ -31,7 +31,8 @@ const Links = [
 	{ icon: <ViewListIcon />, label: "Commands", path: "/commands" },
 	{ icon: <HourglassBottomIcon />, label: "Countdowns", path: "/countdowns" },
 	{ icon: <LibraryMusicIcon />, label: "Song Lists", path: "/songlists" },
-	{ icon: <OutdoorGrillIcon />, label: "Meal Recipes", path: "/recipes" }
+	{ icon: <OutdoorGrillIcon />, label: "Meal Recipes", path: "/recipes" },
+	{ icon: <Leaderboard />, label: "Leaderboards", path: "/leaderboard" }
 ];
 
 function AppNavbar() {

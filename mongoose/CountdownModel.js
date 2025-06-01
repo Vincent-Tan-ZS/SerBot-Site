@@ -23,5 +23,5 @@ const countdownSchema = Schema({
         required: true
     }
 });
-
-export default models?.Countdown || model("Countdown", countdownSchema, "Countdown");
+const collection = "Countdown";
+export default models?.Countdown || model("Countdown", countdownSchema, collection);

@@ -23,4 +23,5 @@ const chefMealSchema = Schema({
         required: true
     }
 });
-export default models?.ChefMeal || model("ChefMeal", chefMealSchema, "ChefMeals");
+const collection = "ChefMeals";
+export default models?.ChefMeal || model("ChefMeal", chefMealSchema, collection);
