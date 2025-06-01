@@ -2,7 +2,7 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {GetNumberOfPages} from "../../Utils";
+import {ApiFetcher, GetNumberOfPages} from "../../Utils";
 import {Box, Grid, IconButton, Stack, Tooltip} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
@@ -15,11 +15,9 @@ import LoadingBox from "../../components/LoadingBox";
 const noOfCards = 4;
 const helperText = "Search for a specific Countdown via Name";
 
-const fetcher = (...args) => fetch(...args).then(res => res.json());
-
 function Countdowns ()
 {
-	const { data, isValidating } = useSWRImmutable("/api/countdowns", fetcher)
+	const { data, isValidating } = useSWRImmutable("/api/countdowns", ApiFetcher)
 	const isMobile = React.useContext(MobileContext);
 
 	const [countdownList, setCountdownList] = React.useState([]);

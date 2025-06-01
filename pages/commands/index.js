@@ -3,7 +3,7 @@ import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
 import AppBody from "../../components/AppBody";
 import useSWRImmutable from "swr/immutable"; 
-import {CopyToClipboard, GetNumberOfPages } from "../../Utils";
+import {ApiFetcher, CopyToClipboard, GetNumberOfPages } from "../../Utils";
 import SearchInput from "../../components/SearchInput";
 import AppPagination from "../../components/AppPagination";
 import AppTableContainer from "../../components/AppTableContainer";
@@ -15,14 +15,13 @@ import LoadingBox from "../../components/LoadingBox";
 
 const noOfRows = 10;
 const helperText = "Search for a specific Command via Title or Description";
-const fetcher = (...args) => fetch(...args).then(res => res.json());
 
 function Commands() {
 	const snackbarStates = React.useContext(SnackbarContext);
 	const modalStates = React.useContext(ModalContext);
 
 	// List States
-	const { data, isValidating } = useSWRImmutable(`/api/command`, fetcher)
+	const { data, isValidating } = useSWRImmutable(`/api/command`, ApiFetcher)
 	const [commandList, setCommandList] = React.useState([]);
 
 	// Filter States

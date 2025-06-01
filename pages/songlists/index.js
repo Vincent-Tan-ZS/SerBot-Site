@@ -5,7 +5,7 @@ import {ExpandMore, MusicVideo, PlaylistAdd, QueuePlayNext} from "@mui/icons-mat
 import {ModalContext} from "../../contexts/ModalContext";
 import AuthCodeModalChild from "../../components/Modals/AuthCodeModalChild";
 import SongListModalChild from "../../components/Modals/SongListModalChild";
-import {CheckAuthCode, GetYTEmbed, IsValidURL} from "../../Utils";
+import {ApiFetcher, CheckAuthCode, GetYTEmbed, IsValidURL} from "../../Utils";
 import useSWR from "swr";
 import MediaPopover from "../../components/MediaPopover";
 import ImportSongsModalChild from "../../components/Modals/ImportSongsModalChild";
@@ -73,11 +73,9 @@ const UserSongsAccordion = (props) => {
 	)
 }
 
-const fetcher = (...args) => fetch(...args).then(res => res.json());
-
 function SongLists(props)
 {
-	const { data, isValidating, mutate } = useSWR("/api/songLists", fetcher);
+	const { data, isValidating, mutate } = useSWR("/api/songLists", ApiFetcher);
 
 	const modalStates = React.useContext(ModalContext);
 

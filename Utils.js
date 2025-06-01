@@ -115,3 +115,5 @@ export const IsValidURL = (str) => {
 		return false;
 	}
 }
+
+export const ApiFetcher = (...args) => fetch(...args).then(res => res.json());

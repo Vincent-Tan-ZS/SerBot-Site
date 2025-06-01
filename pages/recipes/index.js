@@ -10,15 +10,13 @@ import RecipeCard from "../../components/RecipeCard";
 import HeaderBox from "../../components/HeaderBox";
 import SearchInput from "../../components/SearchInput";
 import { AddRecipeModalChild } from "../../components/Modals/AddRecipeModalChild";
-import { CheckAuthCode } from "../../Utils";
+import { ApiFetcher, CheckAuthCode } from "../../Utils";
 
 const helperText = "Search for a specific Recipe";
 
-const fetcher = (...args) => fetch(...args).then(res => res.json());
-
 function Recipes(props)
 {
-	const { data, isValidating, mutate } = useSWR("/api/recipeList", fetcher);
+	const { data, isValidating, mutate } = useSWR("/api/recipeList", ApiFetcher);
 
 	const modalStates = React.useContext(ModalContext);
 
