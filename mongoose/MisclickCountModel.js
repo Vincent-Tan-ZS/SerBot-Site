@@ -2,10 +2,6 @@ import { Schema, model, models } from "mongoose";
 
 // Misclick Count
 const misclickCountSchema = Schema({
-    UserId: {
-        type: String,
-        required: true
-    },
     Username: {
         type: String,
         required: true
