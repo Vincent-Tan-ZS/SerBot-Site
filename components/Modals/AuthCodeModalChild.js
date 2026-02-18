@@ -3,13 +3,15 @@ import axios from "axios";
 import React from "react";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
 import {SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
+import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 
 export default function AuthCodeModalChild(props) {
-	const { refresh, setAuthed } = props;
+	const { refresh } = props;
 
 	const [authCode, setAuthCode] = React.useState("");
 	const inputRef = React.useRef(null);
 	const snackbarStates = React.useContext(SnackbarContext);
+	const { setAuthed } = React.useContext(AuthenticationContext);
 
 	React.useEffect(() => {
 		inputRef.current.focus();

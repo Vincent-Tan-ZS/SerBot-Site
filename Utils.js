@@ -1,4 +1,5 @@
 import {isAfter} from "date-fns";
+import AuthCodeModalChild from "./components/Modals/AuthCodeModalChild";
 
 export const Settings = {
 	PAGE_TITLE_HOME: "SerBot Site",  
@@ -117,3 +118,28 @@ export const IsValidURL = (str) => {
 }
 
 export const ApiFetcher = (...args) => fetch(...args).then(res => res.json());
+
+export const IsDevMode = () => process.env.NODE_ENV === 'development';
+
+export const ExecuteAuthAction = (callback, modalStates, mutate) => {
+	CheckAuthCode();
+
+	if (IsDevMode()) {
+		if (callback) callback();
+		return;
+	}
+	
+	const userId = sessionStorage.getItem("DiscordUserId");
+	
+	if (userId?.length > 0)
+	{
+		if (callback) callback();
+	}
+	else
+	{	
+		modalStates.setModalOpen(true);
+		modalStates.setModalTitle("User Confirmation");
+		modalStates.setModalHeight("auto");
+		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} />);
+	}
+}

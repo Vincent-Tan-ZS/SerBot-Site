@@ -3,13 +3,13 @@ import AppBody from "../../components/AppBody";
 import React from "react";
 import {ExpandMore, MusicVideo, PlaylistAdd, QueuePlayNext} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
-import AuthCodeModalChild from "../../components/Modals/AuthCodeModalChild";
 import SongListModalChild from "../../components/Modals/SongListModalChild";
-import {ApiFetcher, CheckAuthCode, GetYTEmbed, IsValidURL} from "../../Utils";
+import {ApiFetcher, ExecuteAuthAction, GetYTEmbed, IsValidURL} from "../../Utils";
 import useSWR from "swr";
 import MediaPopover from "../../components/MediaPopover";
 import ImportSongsModalChild from "../../components/Modals/ImportSongsModalChild";
 import LoadingBox from "../../components/LoadingBox";
+import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 
 const UserSongsAccordionStyle = styled(Accordion)`
 	.MuiAccordionSummary-root {
@@ -78,8 +78,8 @@ function SongLists(props)
 	const { data, isValidating, mutate } = useSWR("/api/songLists", ApiFetcher);
 
 	const modalStates = React.useContext(ModalContext);
+	const { authed, setAuthed } = React.useContext(AuthenticationContext);
 
-	const [authed, setAuthed] = React.useState(false);
 	const [nextModal, setNextModal] = React.useState("");
 
 	const [popoverAnchor, setPopoverAnchor] = React.useState(null);
@@ -99,12 +99,6 @@ function SongLists(props)
 		modalStates.setModalChildren(<ImportSongsModalChild refresh={mutate} />);
 	}
 
-	const OpenUserAuth = () => {
-		modalStates.setModalTitle("User Confirmation");
-        modalStates.setModalHeight("auto");
-		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} setAuthed={setAuthed} />);
-	}
-
 	React.useEffect(() => {
 		if (authed !== true) return;
 
@@ -122,39 +116,19 @@ function SongLists(props)
 	}, [data, authed]);
 
 	const OnAddUpdateSongListClicked = () => {
-		CheckAuthCode();
-		setNextModal("SongList");
-
-		modalStates.setModalOpen(true);
-
-		const userId = sessionStorage.getItem("DiscordUserId");
-
-		if (userId?.length > 0)
-		{
+		ExecuteAuthAction(() => {
+			setNextModal("SongList");
+			modalStates.setModalOpen(true);
 			OpenSongList();
-		}
-		else
-		{
-			OpenUserAuth();
-		}
+		}, modalStates, mutate);
 	}
 
 	const OnImportClicked = async () => {
-		CheckAuthCode();
-		setNextModal("ImportPlaylist")
-
-		modalStates.setModalOpen(true);
-
-		const userId = sessionStorage.getItem("DiscordUserId");
-
-		if (userId?.length > 0)
-		{
+		ExecuteAuthAction(() => {
+			setNextModal("ImportPlaylist")
+			modalStates.setModalOpen(true);
 			OpenImportPlaylist();
-		}
-		else
-		{
-			OpenUserAuth();
-		}
+		}, modalStates, mutate);
 	}
 	
 	const OnMusicVideoClicked = (song) => (e) => {

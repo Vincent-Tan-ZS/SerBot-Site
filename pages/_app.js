@@ -9,9 +9,13 @@ import {SnackbarContext} from '../contexts/SnackbarContext';
 import {MobileContext} from '../contexts/MobileContext';
 import {useMediaQuery} from '@mui/material';
 import {Helmet} from 'react-helmet';
+import { AuthenticationContext } from '../contexts/AuthenticationContext';
 
 function MyApp({ Component, pageProps }) {
 	const isMobile = useMediaQuery("(max-width:600px)");
+
+  // Authentication
+  const [authed, setAuthed] = React.useState(false);
 
   // Snackbar
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -60,7 +64,8 @@ function MyApp({ Component, pageProps }) {
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <MobileContext.Provider value={isMobile}>
+      <AuthenticationContext.Provider value={{authed, setAuthed}}>
+        <MobileContext.Provider value={isMobile}>
         <Loading />
         <MainSnackbar open={snackbarOpen} onClose={OnSnackbarClose} text={snackbarText} severity={snackbarSeverity} />
         
@@ -74,6 +79,7 @@ function MyApp({ Component, pageProps }) {
           </ModalContext.Provider>
         </SnackbarContext.Provider>
       </MobileContext.Provider>
+      </AuthenticationContext.Provider>
     </>
   )
 }

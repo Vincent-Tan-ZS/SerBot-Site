@@ -1,16 +1,16 @@
-import {Accordion, Button, Stack, styled} from "@mui/material";
+import {Button, Stack} from "@mui/material";
 import AppBody from "../../components/AppBody";
 import React from "react";
 import {Add} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
-import AuthCodeModalChild from "../../components/Modals/AuthCodeModalChild";
 import useSWR from "swr";
 import LoadingBox from "../../components/LoadingBox";
 import RecipeCard from "../../components/RecipeCard";
 import HeaderBox from "../../components/HeaderBox";
 import SearchInput from "../../components/SearchInput";
 import { AddRecipeModalChild } from "../../components/Modals/AddRecipeModalChild";
-import { ApiFetcher, CheckAuthCode } from "../../Utils";
+import { ApiFetcher, ExecuteAuthAction } from "../../Utils";
+import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 
 const helperText = "Search for a specific Recipe";
 
@@ -19,8 +19,7 @@ function Recipes(props)
 	const { data, isValidating, mutate } = useSWR("/api/recipeList", ApiFetcher);
 
 	const modalStates = React.useContext(ModalContext);
-
-	const [authed, setAuthed] = React.useState(false);
+	const { authed, setAuthed } = React.useContext(AuthenticationContext);
 
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
@@ -31,26 +30,11 @@ function Recipes(props)
 		modalStates.setModalChildren(<AddRecipeModalChild refresh={mutate} />);
     }
 
-	const OpenUserAuth = () => {
-		modalStates.setModalTitle("User Confirmation");
-        modalStates.setModalHeight("auto");
-		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} setAuthed={setAuthed} />);
-	}
-
     const OnAddRecipe = () => {
-		CheckAuthCode();
-		modalStates.setModalOpen(true);
-
-		const userId = sessionStorage.getItem("DiscordUserId");
-
-		if (userId?.length > 0)
-		{
+		ExecuteAuthAction(() => {
+			modalStates.setModalOpen(true);
 			OpenAddRecipe();
-		}
-		else
-		{
-			OpenUserAuth();
-		}
+		}, modalStates, mutate);
     }
     
 	React.useEffect(() => {
