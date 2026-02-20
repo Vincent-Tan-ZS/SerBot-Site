@@ -1,5 +1,4 @@
-import {Dialog, DialogContent, DialogTitle, IconButton, styled} from "@mui/material";
-import { Cross as CrossIcon, Height } from '@mui/icons-material';
+import {Dialog, DialogContent, DialogTitle, styled} from "@mui/material";
 
 const StyledDialog = styled(Dialog)(({ theme }) => `
 	.MuiPaper-root {
