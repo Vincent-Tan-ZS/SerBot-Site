@@ -1,3 +1,6 @@
+## v2.6.2
+- CSS backgrounds to make pages look less bland
+
 ## v2.6.1
 - Removed 'axios' package, replaced with Fetch API
 - Added a few more Util methods to simplify API calls

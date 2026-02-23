@@ -21,7 +21,8 @@ a {
   }
   body {
     color: white;
-    background: black;
+    background: 
+    linear-gradient(134deg,black 0%, #262626 35%, black 100%);
   }
 }
 
