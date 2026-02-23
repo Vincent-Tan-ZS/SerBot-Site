@@ -18,7 +18,7 @@ const SearchInputStyle = styled(TextField)`
 		border-color: #aaa !important;
 	}
 
-	.MuiOutlinedInput-root:selected .MuiOutlinedInput-notchedOutline {
+	.MuiOutlinedInput-root:focus .MuiOutlinedInput-notchedOutline {
 		border-color: #aaa !important;
 	}
 `;

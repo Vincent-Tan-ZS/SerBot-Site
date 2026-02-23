@@ -1,3 +1,6 @@
+## v2.6.3.1
+- Fix search input border color inconsistency
+
 ## v2.6.3
 - Filter recipe list by name or ingredients
 - Changed search field design
