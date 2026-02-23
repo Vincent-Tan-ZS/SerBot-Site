@@ -12,7 +12,7 @@ import { AddRecipeModalChild } from "../../components/Modals/AddRecipeModalChild
 import { ApiFetcher, ExecuteAuthAction } from "../../Utils";
 import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 
-const helperText = "Search for a specific Recipe";
+const helperText = "Search for a specific Recipe via name or ingredient";
 
 function Recipes(props)
 {
@@ -23,6 +23,7 @@ function Recipes(props)
 
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
+	const [filteredData, setFilteredData] = React.useState([]);
 
     const OpenAddRecipe = () => {
 		modalStates.setModalTitle("Add Recipe");
@@ -44,6 +45,19 @@ function Recipes(props)
 		setAuthed(false);
 	}, [authed]);
 
+	React.useEffect(() => {
+		if (data === undefined || data.length <= 0) return;
+		const filtered = data.filter((d) => {
+			return d.Name.toLowerCase().includes(filterText.toLowerCase()) ||
+				d.Ingredients.some(i => i.toLowerCase().includes(filterText.toLowerCase()));
+		});
+		setFilteredData(filtered);
+	}, [filterText, setFilteredData]);
+
+	React.useEffect(() => {
+		setFilteredData(data);
+	}, [data]);
+
 	return (
 		<>
 			<AppBody>
@@ -64,8 +78,8 @@ function Recipes(props)
 						</Stack>
                         <Stack gap={1}>
                             {
-                                data !== undefined &&
-                                data.map((d) => <RecipeCard key={`recipe-${d.Id}`} recipe={d} />)
+                                filteredData !== undefined &&
+                                filteredData.map((d) => <RecipeCard key={`recipe-${d.Id}`} recipe={d} />)
                             }
                         </Stack>
 					</Stack>

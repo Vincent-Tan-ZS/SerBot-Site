@@ -8,13 +8,6 @@ const TextInput = styled(TextField)(({ theme }) => `
 		padding-left: ${theme.spacing(1)};
 		background-color: #2f2f2f;
 	}
-
-	.MuiFormHelperText-root {
-		font-style: italic;
-		text-align: center;
-		color: gray;
-		font-size: ${theme.typography.body1.fontSize};
-	}
 `);
 
 export default TextInput;

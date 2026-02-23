@@ -1,3 +1,8 @@
+## v2.6.3
+- Filter recipe list by name or ingredients
+- Changed search field design
+- Added border to main container
+
 ## v2.6.2
 - CSS backgrounds to make pages look less bland
 

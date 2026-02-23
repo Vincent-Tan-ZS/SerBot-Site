@@ -18,6 +18,10 @@ const MainContainer = styled(Container)(({ theme }) => `
       #192736 100%
     );
 	height: calc(100vh - 48px);
+  border-style: none solid none solid;
+  border-width: 4px;
+  border-image: linear-gradient(180deg, #00739E 0%, transparent 100%);
+  border-image-slice: 1;
 
 	padding: ${theme.spacing(1)};
 `);

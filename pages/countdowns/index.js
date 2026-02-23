@@ -103,19 +103,21 @@ function Countdowns ()
 					<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
 						<Stack spacing={2} overflow={'auto'} height={"100%"}>
 							<HeaderBox>
-								<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
-								<Tooltip title={sortByDate === true ? "Unsort" : "Sort by release date"} placement="top">
-									<IconButton sx={{marginLeft: 1}} onClick={OnSortClicked}>
-										{
-											sortByDate &&
-											<ClearAll fontSize={"large"} color={"info"} />
-										}
-										{
-											!sortByDate &&
-											<SortIcon fontSize={"large"} color={"info"} />
-										}
-									</IconButton>
-								</Tooltip>
+								<Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+									<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
+									<Tooltip title={sortByDate === true ? "Unsort" : "Sort by release date"} placement="top">
+										<IconButton sx={{marginLeft: 1}} onClick={OnSortClicked}>
+											{
+												sortByDate &&
+												<ClearAll fontSize={"large"} htmlColor={"white"} />
+											}
+											{
+												!sortByDate &&
+												<SortIcon fontSize={"large"} htmlColor={"white"} />
+											}
+										</IconButton>
+									</Tooltip>
+								</Stack>
 							</HeaderBox>
 							<Box height={"100%"} style={{marginLeft: '32px', marginRight: '32px'}}>
 								{
