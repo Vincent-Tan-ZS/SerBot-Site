@@ -1,3 +1,8 @@
+## v2.6.1
+- Removed 'axios' package, replaced with Fetch API
+- Added a few more Util methods to simplify API calls
+- Removed dev mode flow for local builds
+
 ## v2.6
 - Added page to view and add recipes
 
