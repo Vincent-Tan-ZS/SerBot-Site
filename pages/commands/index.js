@@ -1,9 +1,9 @@
-import {Box, CircularProgress, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {CircularProgress, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import { ContentCopy as CopyIcon } from '@mui/icons-material';
 import React from "react";
 import AppBody from "../../components/AppBody";
 import useSWRImmutable from "swr/immutable"; 
-import {ApiFetcher, CopyToClipboard, GetNumberOfPages } from "../../Utils";
+import {ApiFetcher, CopyToClipboard } from "../../Utils";
 import SearchInput from "../../components/SearchInput";
 import AppPagination from "../../components/AppPagination";
 import AppTableContainer from "../../components/AppTableContainer";
@@ -12,9 +12,22 @@ import {SnackbarContext} from "../../contexts/SnackbarContext";
 import {ModalContext} from "../../contexts/ModalContext";
 import {CopyCommandsModalChild} from "../../components/Modals/CopyCommandsModalChild";
 import LoadingBox from "../../components/LoadingBox";
+import usePagination from "../../hooks/usePagination";
 
-const noOfRows = 10;
 const helperText = "Search for a specific Command via Title or Description";
+
+const transformListItem = (li) => {
+	let _usage = li.Usage.map(u => `ser ${li.List[0]} ${u}`.trim());
+	
+	return {
+		Title: li.Title,
+		List: li.List,
+		Description: li.Description,
+		Usage: _usage
+	}
+};
+
+const filterPredicate = (c, filterText) => c.Title.toLowerCase().includes(filterText.toLowerCase()) || c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined;
 
 function Commands() {
 	const snackbarStates = React.useContext(SnackbarContext);
@@ -27,59 +40,7 @@ function Commands() {
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
 
-	// Pagination States
-	const [curPage, setCurPage] = React.useState(1);
-	const [numberOfPages, setNumberOfPages] = React.useState(1);
-	const [pageList, setPageList] = React.useState([]);
-
-	React.useEffect(() => {
-		let _list = [];
-		let _numberOfPages = 0;
-
-		if (data !== undefined)
-		{
-			_list = data.map(li => {
-				let _usage = li.Usage.map(u => `ser ${li.List[0]} ${u}`.trim());
-	
-				return {
-					Title: li.Title,
-					List: li.List,
-					Description: li.Description,
-					Usage: _usage
-				}
-			});
-	
-			_numberOfPages = GetNumberOfPages(_list, noOfRows);
-		}
-
-		setCommandList(_list);
-		setNumberOfPages(_numberOfPages);
-	}, [data]);
-
-	React.useEffect(() => {
-		if (commandList.length <= 0) return;
-
-		let _pageList = GetPageList(commandList);
-		setPageList(_pageList);
-	}, [commandList, curPage]);
-
-	React.useEffect(() => {
-		if (commandList.length <= 0) return;
-
-		let _filtered = commandList.filter(c => c.Title.toLowerCase().includes(filterText.toLowerCase()) || 
-												c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined);
-
-		let _pageList = GetPageList(_filtered, 1);
-		let _numberOfPages = GetNumberOfPages(_filtered, noOfRows);
-
-		setCurPage(1);
-		setNumberOfPages(_numberOfPages);
-		setPageList(_pageList);
-	}, [filterText]);
-
-	const GetPageList = (_list, _page = curPage) => {
-		return _list.slice((_page - 1) * noOfRows, _page * noOfRows);
-	}
+	const { curPage, setCurPage, numberOfPages, pageList } = usePagination(10, data, commandList, setCommandList, filterText, transformListItem, filterPredicate); 
 
 	const OnCopyClicked = (list) => () => {
 		const matches = list.match(/{.+?}|@\w+|[[]\w+?]/g);

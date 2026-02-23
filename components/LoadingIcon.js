@@ -1,4 +1,4 @@
-import {Box, LinearProgress, Stack, Typography, styled} from "@mui/material";
+import {Box, CircularProgress, styled} from "@mui/material";
 
 const LoadingAnimation = styled(Box)`
   width: 250px;
@@ -12,12 +12,9 @@ const LoadingAnimation = styled(Box)`
 export default function LoadingIcon(props)
 {
 	return(
-		<Stack alignItems={'center'} spacing={1} {...props}>
+		<>
+			<CircularProgress size={350} thickness={2} sx={{ position: 'absolute' }} />
 			<LoadingAnimation />
-			<Typography variant="h5" fontStyle={"italic"} color={"gray"}>
-				Loading...
-			</Typography>
-			<LinearProgress sx={{width: '100%'}} />
-		</Stack>
+		</>
 	)
 }

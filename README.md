@@ -1,3 +1,8 @@
+## v2.6.3.2
+- Moved paginations into a usePagination hook
+- Changed loading
+- Added Table and pagination to recipe page (WIP)
+
 ## v2.6.3.1
 - Fix search input border color inconsistency
 
