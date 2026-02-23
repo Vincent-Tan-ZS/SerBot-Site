@@ -1,16 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { Client } from 'youtubei';
 import UserSongListModel from "../../../mongoose/UserSongListModel";
-import axios from 'axios';
+import { HTTPMethod, AssertPost, ParseRequestPayload } from "../../../Utils";
 
 const handler = async (req, res) => {
-	if (req.method !== "POST")
-	{
-		res.status(405).json({message: "Only POST requests allowed"});
-		return;
-	}
+	if (!AssertPost(req, res)) return;
 
-	const { playlistUrl, userId, username } = req.body;
+	const { playlistUrl, userId, username } = ParseRequestPayload(req);
 
 	let status = 200;
 	let resp = {
@@ -31,7 +26,7 @@ const handler = async (req, res) => {
 
 		let tracks = [];
 
-		const res = await axios.get(playlistUrl);
+		const res = await Fetch(HTTPMethod.GET, playlistUrl);
 
 		let doc = new jsdom.JSDOM(res.data);
 		let rows = doc.window.document.getElementsByClassName("songs-list-row");

@@ -1,17 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import ChefMealModel from "../../mongoose/ChefMealModel";
 import { ConnectDB } from "../../mongoose/mongo-conn";
+import { AssertPost, ParseRequestPayload } from "../../Utils";
 
 const handler = async (req, res) => {
-	if (req.method !== "POST")
-	{
-		res.status(405).json({message: "Only POST requests allowed"});
-		return;
-	}
+	if (!AssertPost(req, res)) return;
 
 	await ConnectDB();
 
-	const { name, ingredients, steps, username } = req.body;
+	const { name, ingredients, steps, username } = ParseRequestPayload(req);
 
 	const recipe = await ChefMealModel.findOne({ Name: name });
 

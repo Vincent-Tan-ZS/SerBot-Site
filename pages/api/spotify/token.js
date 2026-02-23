@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import axios from "axios"
+
+import { Fetch, HTTPMethod } from "../../../Utils";
 
 const handler = async (req, res) => {
 	if (req.method !== "GET")
@@ -15,7 +16,7 @@ const handler = async (req, res) => {
 
 	try
 	{
-		const res = await axios.post("https://accounts.spotify.com/api/token", {
+		const res = await Fetch(HTTPMethod.POST, "https://accounts.spotify.com/api/token", {
 			"grant_type": "client_credentials"
 		}, {
 			headers: {

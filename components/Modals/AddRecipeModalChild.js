@@ -3,9 +3,8 @@ import React from "react";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { arrayMove, List as MovableList } from "react-movable";
 import styled from "@emotion/styled";
-import axios from "axios";
 import { ModalContext } from "../../contexts/ModalContext";
-import { SetErrorSnackbar } from "../../Utils";
+import { Fetch, HTTPMethod, SetErrorSnackbar } from "../../Utils";
 import { Delete } from "@mui/icons-material";
 
 const StepListItem = styled(ListItem)`
@@ -58,12 +57,12 @@ export function AddRecipeModalChild(props) {
     const OnSave = () => {
         const userName = sessionStorage.getItem("DiscordUserName");
 
-        axios.post("./api/addRecipe", {
+        Fetch(HTTPMethod.POST, './api/addRecipe', {
             name: recipeName, 
             ingredients: ingredients,
             steps: steps,
             username: userName
-        }).then((resp) => {
+        }).then(() => {
             refresh();
         }).catch((e) => {
 			SetErrorSnackbar(snackbarStates, e.response.data.message);

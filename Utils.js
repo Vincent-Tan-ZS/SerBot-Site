@@ -1,4 +1,5 @@
 import {isAfter} from "date-fns";
+import { ConnectDB } from "./mongoose/mongo-conn";
 import AuthCodeModalChild from "./components/Modals/AuthCodeModalChild";
 
 export const Settings = {
@@ -12,6 +13,11 @@ export const SNACKBAR_SEVERITY_WARNING = "warning";
 export const SNACKBAR_SEVERITY_INFO = "info";
 export const SNACKBAR_SEVERITY_SUCCESS = "success";
 export const SNACKBAR_SEVERITY_ERROR = "error";
+
+export const HTTPMethod = {
+	GET: "GET",
+	POST: "POST"
+}
 
 export const SelectMenuProps = {
 	MenuListProps: {
@@ -119,15 +125,8 @@ export const IsValidURL = (str) => {
 
 export const ApiFetcher = (...args) => fetch(...args).then(res => res.json());
 
-export const IsDevMode = () => process.env.NODE_ENV === 'development';
-
 export const ExecuteAuthAction = (callback, modalStates, mutate) => {
 	CheckAuthCode();
-
-	if (IsDevMode()) {
-		if (callback) callback();
-		return;
-	}
 	
 	const userId = sessionStorage.getItem("DiscordUserId");
 	
@@ -143,3 +142,36 @@ export const ExecuteAuthAction = (callback, modalStates, mutate) => {
 		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} />);
 	}
 }
+
+export const Fetch = async (method, url, payload) => {
+	try
+	{
+		const resp = await fetch(url, {
+			method: method,
+			body: JSON.stringify(payload)
+		});
+
+		const jsonData = await resp.json();
+		if (!resp.ok) return Promise.reject({ response: { data: { message: jsonData.message } } });
+		return { data: jsonData };
+	}
+	catch (e)
+	{
+		return Promise.reject({ response: { data: { message: e.message } } });
+	}
+}
+
+export const AssertPost = async (req, res) => {
+	if (req.method === HTTPMethod.POST) return true;
+	return res.status(405).json({message: "Only POST requests allowed"});
+}
+
+export const ApiGetAll = async (mongoModel, res) => {
+	await ConnectDB();
+
+	const data = await mongoModel.find().lean();
+	
+	res.status(200).send(data);
+}
+
+export const ParseRequestPayload = (req) => JSON.parse(req.body);

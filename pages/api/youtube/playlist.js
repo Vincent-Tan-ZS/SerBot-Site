@@ -1,15 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { Client } from 'youtubei';
 import UserSongListModel from "../../../mongoose/UserSongListModel";
+import { AssertPost, ParseRequestPayload } from '../../../Utils';
 
 const handler = async (req, res) => {
-	if (req.method !== "POST")
-	{
-		res.status(405).json({message: "Only POST requests allowed"});
-		return;
-	}
+	if (!AssertPost(req, res)) return;
 
-	const { playlistId, userId, username } = req.body;
+	const { playlistId, userId, username } = ParseRequestPayload(req);
 
 	let status = 200;
 	let resp = {

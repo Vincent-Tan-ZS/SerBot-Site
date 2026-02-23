@@ -1,13 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import CountdownModel from "../../mongoose/CountdownModel";
-import { ConnectDB } from "../../mongoose/mongo-conn";
+import { ApiGetAll } from "../../Utils";
 
-const handler = async (req, res) => {
-	await ConnectDB();
-
-	const countdowns = await CountdownModel.find().lean();
-	
-	res.status(200).send(countdowns);
-}
+const handler = async (req, res) => ApiGetAll(CountdownModel, res);
 
 export default handler;

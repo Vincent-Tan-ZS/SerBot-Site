@@ -1,8 +1,7 @@
 import {Button, Stack, TextField} from "@mui/material";
-import axios from "axios";
 import React from "react";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
-import {SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
+import {Fetch, HTTPMethod, SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbarSeverity, SetSnackbarText} from "../../Utils";
 import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 
 export default function AuthCodeModalChild(props) {
@@ -22,7 +21,7 @@ export default function AuthCodeModalChild(props) {
 	}
 
 	const OnAuthCodeClicked = () => {
-		axios.post('./api/authorize', {
+		Fetch(HTTPMethod.POST, './api/authorize', {
 			code: authCode
 		}).then((resp) => {
 			sessionStorage.setItem("DiscordUserId", resp.data.userId);

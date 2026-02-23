@@ -14,7 +14,6 @@
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
     "@mui/x-date-pickers": "^6.20.2",
-    "axios": "^1.13.5",
     "date-fns": "^2.30.0",
     "jsdom": "^22.1.0",
     "mongoose": "^7.3.0",

@@ -1,15 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import * as spotifyAPI from 'spotify-web-api-node';
 import UserSongListModel from "../../../mongoose/UserSongListModel";
+import { AssertPost, ParseRequestPayload } from '../../../Utils';
 
 const handler = async (req, res) => {
-	if (req.method !== "POST")
-	{
-		res.status(405).json({message: "Only POST requests allowed"});
-		return;
-	}
+	if (!AssertPost(req, res)) return;
 
-	const { playlistId, accessToken, userId, username } = req.body;
+	const { playlistId, accessToken, userId, username } = ParseRequestPayload(req);
 
 	let status = 200;
 	let resp = {

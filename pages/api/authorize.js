@@ -1,19 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import {add, isAfter} from "date-fns";
+import {isAfter} from "date-fns";
 import SiteAuthorizationModel from "../../mongoose/SiteAuthorizationModel";
-import UserSongListModel, {userSongListSchema} from "../../mongoose/UserSongListModel";
 import { ConnectDB } from "../../mongoose/mongo-conn";
+import { AssertPost, ParseRequestPayload } from "../../Utils";
 
 const handler = async (req, res) => {
-	if (req.method !== "POST")
-	{
-		res.status(405).json({message: "Only POST requests allowed"});
-		return;
-	}
+	if (!AssertPost(req, res)) return;
 
 	await ConnectDB();
 
-	const { code } = req.body;
+	const { code } = ParseRequestPayload(req);
 
 	const siteAuth = await SiteAuthorizationModel.findOne({ AuthCode: code });
 

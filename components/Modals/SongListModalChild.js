@@ -1,9 +1,8 @@
 import {Box, Button, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography} from "@mui/material";
 import AppTableContainer from "../AppTableContainer";
 import React from "react";
-import axios from "axios";
 import {Add, Check, Close, Delete, DeleteForever, Edit, MusicVideo} from "@mui/icons-material";
-import {GetYTEmbed, IsValidURL, SetErrorSnackbar} from "../../Utils";
+import {GetYTEmbed, HTTPMethod, IsValidURL, SetErrorSnackbar} from "../../Utils";
 import MediaPopover from "../MediaPopover";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
 import BaseModal from "../BaseModal";
@@ -68,7 +67,7 @@ export default function SongListModalChild(props) {
 			return;
 		}
 
-		axios.post(`./api/addNewSong`, {
+		Fetch(HTTPMethod.POST, `./api/addNewSong`, {
 			userId: userId,
 			username: userName,
 			song: newSong
@@ -91,7 +90,7 @@ export default function SongListModalChild(props) {
 	}
 
 	const OnDeleteSongClicked = (songId) => () => {
-		axios.post(`./api/deleteSong`, {
+		Fetch(HTTPMethod.POST, `./api/deleteSong`, {
 			userId: userId,
 			songId: songId
 		}).then((res) => {
@@ -120,7 +119,7 @@ export default function SongListModalChild(props) {
 	}
 
 	const OnDeleteAllConfirmed = () => {
-		axios.post(`./api/deleteAllSongs`, {
+		Fetch(HTTPMethod.POST, `./api/deleteAllSongs`, {
 			userId: userId
 		}).then((res) => {
 			refresh();	
@@ -149,7 +148,7 @@ export default function SongListModalChild(props) {
 			return;
 		}
 
-		axios.post(`./api/updateSong`, {
+		Fetch(HTTPMethod.POST, `./api/updateSong`, {
 			userId: userId,
 			songId: updateSongId,
 			newSong: updateSong

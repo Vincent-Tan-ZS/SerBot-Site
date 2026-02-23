@@ -1,13 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import ChefMealModel from "../../mongoose/ChefMealModel";
-import { ConnectDB } from "../../mongoose/mongo-conn";
+import { ApiGetAll } from "../../Utils";
 
-const handler = async (req, res) => {
-	await ConnectDB();
-
-	const recipes = await ChefMealModel.find().lean();
-	
-	res.status(200).send(recipes);
-}
+const handler = async (req, res) => ApiGetAll(ChefMealModel, res);
 
 export default handler;

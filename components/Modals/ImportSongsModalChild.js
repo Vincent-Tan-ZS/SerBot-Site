@@ -1,9 +1,8 @@
 import {Button, CircularProgress, FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography, styled} from "@mui/material";
-import axios from "axios";
 import React from "react";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
 import {ModalContext} from "../../contexts/ModalContext";
-import {SetErrorSnackbar} from "../../Utils";
+import {Fetch, HTTPMethod, SetErrorSnackbar} from "../../Utils";
 import {CheckCircleTwoTone} from "@mui/icons-material";
 
 const InputPlaylist = styled(TextField)`
@@ -69,12 +68,12 @@ export default function ImportSongsModalChild(props) {
 		
 					if (spotifyAccessToken.length <= 0)
 					{
-						const resp = await axios.get("./api/spotify/token");
+						const resp = await Fetch(HTTPMethod.GET, "./api/spotify/token");
 						setSpotifyToken(resp.data.token);
 						spotifyAccessToken = resp.data.token;
 					}
 		
-					await axios.post("./api/spotify/playlist", {
+					await Fetch(HTTPMethod.POST, "./api/spotify/playlist", {
 						playlistId: playlistId,
 						accessToken: spotifyAccessToken,
 						userId: userId,
@@ -82,14 +81,14 @@ export default function ImportSongsModalChild(props) {
 					});
 					break;
 				case "yt":
-					await axios.post("./api/youtube/playlist", {
+					await Fetch(HTTPMethod.POST, "./api/youtube/playlist", {
 						playlistId: playlistId,
 						userId: userId,
 						username: userName
 					});
 					break;
 				case "apple":
-					await axios.post("./api/apple/playlist", {
+					await Fetch(HTTPMethod.POST, "./api/apple/playlist", {
 						playlistUrl: playlistId,
 						userId: userId,
 						username: userName
