@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Loading from '../components/Loading'
 import MainSnackbar from '../components/MainSnackbar'
 import '../styles/globals.css'
@@ -7,7 +7,7 @@ import BaseModal from '../components/BaseModal';
 import {ModalContext} from '../contexts/ModalContext';
 import {SnackbarContext} from '../contexts/SnackbarContext';
 import {MobileContext} from '../contexts/MobileContext';
-import {useMediaQuery} from '@mui/material';
+import {Button, useMediaQuery} from '@mui/material';
 import {Helmet} from 'react-helmet';
 import { AuthenticationContext } from '../contexts/AuthenticationContext';
 import ConfirmationModalChild from '../components/Modals/ConfirmationModalChild';
@@ -33,17 +33,21 @@ function MyApp({ Component, pageProps }) {
   const [modalMaxWidth, setModalMaxWidth] = React.useState("lg");
   const [modalChildren, setModalChildren] = React.useState(<></>);
   const [modalHeight, setModalHeight] = React.useState("auto");
+  const [modalActions, setModalActions] = React.useState(undefined);
+  const [modalProps, setModalProps] = React.useState({});
 
   const OnModalClosed = () => {
     setModalOpen(false);
     setModalHeight("auto");
   }
 
-  const OpenModal = ({title, height, maxWidth, children}) => {
+  const OpenModal = ({title, height, maxWidth, actions, props, children}) => {
 			setModalOpen(true);
       if (title) setModalTitle(title);
       if (height) setModalHeight(height);
       if (maxWidth) setModalMaxWidth(maxWidth);
+      setModalProps(props ?? {});
+      setModalActions(actions ?? <></>);
       setModalChildren(children);
   }
 
@@ -55,15 +59,29 @@ function MyApp({ Component, pageProps }) {
       setModalTitle("");
       setModalHeight("auto")
       setModalChildren(<></>);
+      setModalActions(undefined);
+      setModalProps({});
     }
   }
 
   const OpenConfirmationModal = ({ title, message, height, callback }) => {
-    setModalOpen(true);
-    setModalTitle(title);
-    setModalHeight(height ?? "auto");
-    setModalChildren(<ConfirmationModalChild callback={callback} message={message} />)
+    OpenModal({
+      title: title,
+      height: height ?? "auto",
+      children: <ConfirmationModalChild callback={callback} message={message} />,
+      actions: (
+        <>
+          <Button variant="contained" color="primary" onClick={() => OnConfirmationCallbackClick(callback)}>Confirm</Button>
+          <Button variant="contained" color="error" onClick={CloseModal}>Cancel</Button>
+        </>
+      )
+    });
   }
+
+  const OnConfirmationCallbackClick = useCallback((callback) => {
+    CloseModal();
+    if (callback) callback();
+  });
 
   // Title
   const [title, setTitle] = React.useState("SerBot Site");
@@ -98,8 +116,8 @@ function MyApp({ Component, pageProps }) {
         
         
         <SnackbarContext.Provider value={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}}>
-          <ModalContext.Provider value={{OpenModal, CloseModal, OpenConfirmationModal}}>
-            <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth} height={modalHeight}>
+          <ModalContext.Provider value={{OpenModal, CloseModal, OpenConfirmationModal, modalProps, setModalProps}}>
+            <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth} height={modalHeight} actions={modalActions}>
               {modalChildren}
             </BaseModal>
             <Component {...pageProps} />

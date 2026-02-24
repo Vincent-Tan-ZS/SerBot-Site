@@ -1,11 +1,11 @@
-import { Button, Chip, Divider, Grid, IconButton, List, ListItem, ListItemText, Stack, TextField } from "@mui/material";
-import React from "react";
+import { Box, Button, Checkbox, Chip, Collapse, Divider, FormControlLabel, FormGroup, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
+import React, { useCallback, useState } from "react";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
 import { arrayMove, List as MovableList } from "react-movable";
 import styled from "@emotion/styled";
 import { ModalContext } from "../../contexts/ModalContext";
 import { Fetch, HTTPMethod, SetErrorSnackbar } from "../../Utils";
-import { Delete } from "@mui/icons-material";
+import { Add, Close, Delete, Done, Edit, ExpandLess, ExpandMore } from "@mui/icons-material";
 
 const StepListItem = styled(ListItem)`
     border: 1px solid #0E4686;
@@ -16,111 +16,188 @@ const StepListItem = styled(ListItem)`
     cursor: pointer;
 `;
 
-export function AddRecipeModalChild(props) {
-	const { refresh } = props;
-	const snackbarStates = React.useContext(SnackbarContext);
-	const modalStates = React.useContext(ModalContext);
+const CollapsibleListItem = (props) => {
+    const { index, label, isEditing, onEdit, onEditCancel, onSubmit, onDelete, isAddRecipe } = props;
 
-    const [recipeName, setRecipeName] = React.useState("");
-    const [ingredients, setIngredients] = React.useState([]);
-    const [steps, setSteps] = React.useState([]);
+    const [workingLabel, setWorkingLabel] = useState(label);
 
-    const [curIngredient, setCurIngredient] = React.useState("");
-    const [curStep, setCurStep] = React.useState("");
+    const OnTextChanged = useCallback((e) => {
+        setWorkingLabel(e.target.value);
+    });
 
-    const OnTextChanged = (setValue) => (e, v) => {
-        setValue(e.target.value);
-    }
+    return (
+        <Paper sx={{ px: 2, border: "1px solid #aaa", background: "linear-gradient(90deg, #222, #444, #222) !important" }}>
+            <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+                {
+                    isEditing 
+                    ? (
+                        <TextField size={"small"} fullWidth sx={{ px: 0 }} value={workingLabel} onChange={OnTextChanged} autoFocus />
+                    )
+                    : (
+                        <FormGroup>
+                            <FormControlLabel sx={{ color: "white" }} control={<Checkbox sx={{ display: isAddRecipe ? "none" : "block" }} />} label={workingLabel} />
+                        </FormGroup>
+                    )
+                }
+                <Stack direction={"row"}>
+                    {
+                        isEditing
+                        ? (
+                            <>
+                                <IconButton onClick={() => onSubmit(index, workingLabel)}>
+                                    <Done htmlColor="white" />
+                                </IconButton>
+                                <IconButton onClick={onEditCancel}>
+                                    <Close htmlColor="white" />
+                                </IconButton>
+                            </>
+                        )
+                        : (
+                            <>
+                                <IconButton onClick={onEdit}>
+                                    <Edit htmlColor="white" />
+                                </IconButton>
+                                <IconButton onClick={onDelete}>
+                                    <Delete htmlColor="white" />
+                                </IconButton>
+                            </>
+                        )
+                    }
+                </Stack>
+            </Stack>
+        </Paper>
+    )
+}
 
-    const OnAddList = (curVal, setCurVal, val, setVal) => () => {
-        if (curVal.length <= 0) return;
-        if (val.includes(curVal) !== true)
-        {
-            const _val = [...val];
-            _val.push(curVal);
-            setVal(_val);
-        }
+const CollapsibleList = (props) => {
+    const { title, listItems, setListItems, isAddRecipe } = props;
 
-        setCurVal("");
-    }
-    
-    const OnDeleteList = (list, val, setVal) => (e, v) => {
-        const _val = [...list];
-        const delInd = _val.indexOf(val);
-        _val.splice(delInd, 1);
-        setVal(_val);
-    }
-    
-	const OnCloseModal = () => {
-        modalStates.CloseModal();
-	}
+    const [open, setOpen] = useState(true);
+    const [editIndex, setEditIndex] = useState([]);
 
-    const OnSave = () => {
-        const userName = sessionStorage.getItem("DiscordUserName");
+    const OnToggleOpen = useCallback(() => {
+        setOpen(!open);
+    });
 
-        Fetch(HTTPMethod.POST, './api/addRecipe', {
+    const OnAddClicked = useCallback(() => {
+        const newListItems = [...listItems];
+        newListItems.push("");
+        setListItems(newListItems);
+
+        const newEditIndex = [...editIndex];
+        newEditIndex.push(newListItems.length - 1);
+        setEditIndex(newEditIndex);
+
+        setOpen(true);
+    });
+
+    const OnDeleteClicked = useCallback((itemToDelete) => {
+        const newListItems = [...listItems];
+        const delInd = newListItems.indexOf(itemToDelete);
+        newListItems.splice(delInd, 1);
+        setListItems(newListItems);
+    });
+
+    const OnEditClicked = useCallback((index) => {
+        const newEditIndex = [...editIndex];
+        newEditIndex.push(index);
+        setEditIndex(newEditIndex);
+    });
+
+    const OnEditCancelClicked = useCallback((index) => {
+        const newEditIndex = [...editIndex];
+        const arrIndex = newEditIndex.indexOf(index);
+        newEditIndex.splice(arrIndex, 1);
+        setEditIndex(newEditIndex);
+    });
+
+    const OnSubmitClicked = useCallback((index, newItem) => {
+        const newListItems = [...listItems];
+        newListItems[index] = newItem;
+        setListItems(newListItems);
+
+        OnEditCancelClicked(index);
+    });
+
+    return (
+        <>
+            <Box>
+                <List>
+                    <ListItemButton onClick={OnToggleOpen} sx={{ borderBottom: '1px solid #777' }}>
+                        <ListItemText sx={{ color: "white" }} primary={title} />
+                        {open ? <ExpandLess htmlColor={"white"} /> : <ExpandMore htmlColor={"white"} />}
+                    </ListItemButton>
+                </List>
+                <Collapse in={open}>
+                    {
+                        listItems &&
+                        <Stack gap={1}>
+                            {
+                                listItems.map((li, index) => <CollapsibleListItem key={index} index={index} label={li}
+                                    isAddRecipe={isAddRecipe}
+                                    isEditing={editIndex.includes(index)}
+                                    onEdit={() => OnEditClicked(index)}
+                                    onEditCancel={() => OnEditCancelClicked(index)}
+                                    onDelete={() => OnDeleteClicked(li)} 
+                                    onSubmit={OnSubmitClicked} />)
+                            }
+                        </Stack>
+                    }
+                </Collapse>
+            </Box>
+            <Button variant={"contained"} size={"small"} startIcon={<Add />} sx={{ width: "fit-content" }} onClick={OnAddClicked}>
+                Add {title}
+            </Button>
+        </>
+    )
+}
+
+/*
+{
             name: recipeName, 
             ingredients: ingredients,
             steps: steps,
             username: userName
-        }).then(() => {
-            refresh();
-        }).catch((e) => {
-			SetErrorSnackbar(snackbarStates, e.response.data.message);
-        }).finally(OnCloseModal);
-    }
-    
+        }
+*/
+
+export function AddRecipeModalChild(props) {
+	const { recipe } = props;
+
+    const modalStates = React.useContext(ModalContext);
+
+    const [recipeName, setRecipeName] = React.useState(modalStates.modalProps?.name ?? "");
+    const [ingredients, setIngredients] = React.useState(modalStates.modalProps?.ingredients ?? []);
+    const [steps, setSteps] = React.useState(modalStates.modalProps?.steps ?? []);
+
+    React.useEffect(() => {
+        modalStates.setModalProps({
+            name: recipeName,
+            ingredients: ingredients,
+            steps: steps
+        });
+    }, [recipeName, ingredients, steps]);
+
+    const OnNameChanged = useCallback((e) => {
+        setRecipeName(e.target.value);
+    });
     
 	return (
-		<>
-            <Stack gap={1}>
-                <TextField size={"small"} required label="Recipe Name" value={recipeName} onChange={OnTextChanged(setRecipeName)} />
-                <Divider sx={{borderColor: "gray"}} />
+        <Stack gap={1} justifyContent={"space-between"}>
+            <Box>
                 <Stack gap={1}>
-                    <Grid container justifyContent={"space-between"}>
-                        <Grid item xs={10}>
-                            <TextField size={"small"} label="Ingredient" fullWidth value={curIngredient} onChange={OnTextChanged(setCurIngredient)} />
-                        </Grid>
-                        <Grid item>
-                            <Button variant="contained" fullWidth sx={{height: '100%'}} onClick={OnAddList(curIngredient, setCurIngredient, ingredients, setIngredients)}>Add Ingredient</Button>
-                        </Grid>
-                    </Grid>
-                    <div>
-                        {
-                            ingredients.map((ing) => <Chip key={`ing-${ing}`} color={"info"} label={ing} size={"small"} onDelete={OnDeleteList(ingredients, ing, setIngredients)} sx={{marginRight: 1}} />)
-                        }
-                    </div>
+                    <Typography color={"white"}>Name</Typography>
+                    <TextField size={"small"} variant={"outlined"} value={recipeName} onChange={OnNameChanged} />
                 </Stack>
-                <Divider sx={{borderColor: "gray"}} />
                 <Stack gap={1}>
-                    <Grid container justifyContent={"space-between"}>
-                        <Grid item xs={10}>
-                            <TextField size={"small"} label="Step" fullWidth value={curStep} onChange={OnTextChanged(setCurStep)} />
-                        </Grid>
-                        <Grid item>
-                            <Button variant="contained" fullWidth sx={{height: '100%'}} onClick={OnAddList(curStep, setCurStep, steps, setSteps)}>Add Step</Button>
-                        </Grid>
-                    </Grid>
-                    {
-                        steps.length > 0 &&
-                        <>
-                            <em style={{color: "white"}}>List is sortable by dragging & dropping</em>
-                            <MovableList values={steps} onChange={({ oldIndex, newIndex }) =>
-                                    setSteps(arrayMove(steps, oldIndex, newIndex))
-                                }
-                                renderList={({ children, props }) => <List {...props}>{children}</List>}
-                                renderItem={({ value, index, props }) => <StepListItem secondaryAction={
-                                    <IconButton edge="end" aria-label="delete" onClick={OnDeleteList(steps, value, setSteps)}>
-                                      <Delete />
-                                    </IconButton>
-                                  } {...props}> <ListItemText>{index + 1}. {value}</ListItemText> </StepListItem>} 
-                            />
-                        </>
-                    }
+                    <CollapsibleList title={"Ingredient"} listItems={ingredients} setListItems={setIngredients} isAddRecipe={!recipe}>
+                    </CollapsibleList>
                 </Stack>
-                <Divider sx={{borderColor: "gray"}} />
-                <Button variant={"contained"} onClick={OnSave}>Save</Button>
-            </Stack>
-		</>
+                <Stack gap={1}>
+                    <CollapsibleList title={"Step"} listItems={steps} setListItems={setSteps} isAddRecipe={!recipe}>
+                    </CollapsibleList>
+                </Stack>
+            </Box>
+        </Stack>
 	)
 }

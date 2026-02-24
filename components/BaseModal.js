@@ -1,4 +1,4 @@
-import {Dialog, DialogContent, DialogTitle, styled} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogTitle, styled} from "@mui/material";
 
 const StyledDialog = styled(Dialog)(({ theme }) => `
 	.MuiPaper-root {
@@ -11,6 +11,10 @@ const StyledDialog = styled(Dialog)(({ theme }) => `
 		color: white;
 		font-weight: bold;
 		font-size: 2rem;
+	}
+
+	.MuiDialogActions-root {
+		background: #303436;
 	}
 
 	.MuiDialogContent-root {
@@ -41,7 +45,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => `
 `);
 
 export default function BaseModal(props) {
-	const { open, OnClose, title, maxWidth, height, children } = props;
+	const { open, OnClose, title, maxWidth, height, children, actions } = props;
 
 	return (
 		<StyledDialog open={Boolean(open)} onClose={OnClose} maxWidth={maxWidth ?? "lg"} fullWidth>
@@ -54,6 +58,12 @@ export default function BaseModal(props) {
 			<DialogContent sx={{height: height}}>
 				{children}
 			</DialogContent>
+			{
+				actions &&
+				<DialogActions>
+					{actions}
+				</DialogActions>
+			}
 		</StyledDialog>
 	)
 }
