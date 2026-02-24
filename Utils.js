@@ -132,6 +132,7 @@ export const ExecuteAuthAction = (callback, modalStates, mutate) => {
 	
 	if (userId?.length > 0)
 	{
+		modalStates.CloseModal();
 		if (callback) callback();
 	}
 	else
@@ -139,7 +140,7 @@ export const ExecuteAuthAction = (callback, modalStates, mutate) => {
 		modalStates.OpenModal({
 			title: "User Confirmation",
 			height: "auto",
-			children: <AuthCodeModalChild refresh={mutate} />
+			children: <AuthCodeModalChild refresh={mutate} callback={callback} />
 		});
 	}
 }

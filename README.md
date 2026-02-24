@@ -1,3 +1,6 @@
+## v2.6.3.4
+- Allow deletion of recipes
+
 ## v2.6.3.3
 - ModalContext now only sends in 2 methods to Open and Close Modals while still providing control over modal details
 

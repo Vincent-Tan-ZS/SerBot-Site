@@ -10,6 +10,7 @@ import {MobileContext} from '../contexts/MobileContext';
 import {useMediaQuery} from '@mui/material';
 import {Helmet} from 'react-helmet';
 import { AuthenticationContext } from '../contexts/AuthenticationContext';
+import ConfirmationModalChild from '../components/Modals/ConfirmationModalChild';
 
 function MyApp({ Component, pageProps }) {
 	const isMobile = useMediaQuery("(max-width:600px)");
@@ -57,10 +58,11 @@ function MyApp({ Component, pageProps }) {
     }
   }
 
-  const OpenConfirmationModal = (title) => {
+  const OpenConfirmationModal = ({ title, message, height, callback }) => {
     setModalOpen(true);
     setModalTitle(title);
-    setModalHeight("250px");
+    setModalHeight(height ?? "auto");
+    setModalChildren(<ConfirmationModalChild callback={callback} message={message} />)
   }
 
   // Title
@@ -96,7 +98,7 @@ function MyApp({ Component, pageProps }) {
         
         
         <SnackbarContext.Provider value={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}}>
-          <ModalContext.Provider value={{OpenModal, CloseModal}}>
+          <ModalContext.Provider value={{OpenModal, CloseModal, OpenConfirmationModal}}>
             <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth} height={modalHeight}>
               {modalChildren}
             </BaseModal>

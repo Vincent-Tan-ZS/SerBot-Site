@@ -5,7 +5,7 @@ import {Fetch, HTTPMethod, SNACKBAR_SEVERITY_ERROR, SetSnackbarOpen, SetSnackbar
 import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 
 export default function AuthCodeModalChild(props) {
-	const { refresh } = props;
+	const { refresh, callback } = props;
 
 	const [authCode, setAuthCode] = React.useState("");
 	const inputRef = React.useRef(null);
@@ -30,6 +30,7 @@ export default function AuthCodeModalChild(props) {
 
 			refresh();
 			setAuthed(true);
+			if (callback) callback();
 		}).catch((err) => {
 			SetSnackbarOpen(snackbarStates, true);
 			SetSnackbarSeverity(snackbarStates, SNACKBAR_SEVERITY_ERROR);

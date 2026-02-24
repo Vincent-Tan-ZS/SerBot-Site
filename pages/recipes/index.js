@@ -8,11 +8,12 @@ import LoadingBox from "../../components/LoadingBox";
 import HeaderBox from "../../components/HeaderBox";
 import SearchInput from "../../components/SearchInput";
 import { AddRecipeModalChild } from "../../components/Modals/AddRecipeModalChild";
-import { ApiFetcher, ExecuteAuthAction } from "../../Utils";
+import { ApiFetcher, ExecuteAuthAction, Fetch, HTTPMethod, SetErrorSnackbar } from "../../Utils";
 import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 import usePagination from "../../hooks/usePagination";
 import AppPagination from "../../components/AppPagination";
 import ConfirmationModalChild from "../../components/Modals/ConfirmationModalChild";
+import { SnackbarContext } from "../../contexts/SnackbarContext";
 
 const helperText = "Search for a specific Recipe via name or ingredient";
 
@@ -39,7 +40,7 @@ function Recipes(props)
 	const { data, isValidating, mutate } = useSWR("/api/recipeList", ApiFetcher);
 
 	const modalStates = React.useContext(ModalContext);
-	const { authed, setAuthed } = React.useContext(AuthenticationContext);
+	const snackbarStates = React.useContext(SnackbarContext);
 
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
@@ -60,16 +61,22 @@ function Recipes(props)
 	const OnDeleteRecipe = (recipeId) => {
 		ExecuteAuthAction(() => {
 			const recipe = data.find(r => r.Id === recipeId);
-			console.log(recipe);
+			const username = sessionStorage.getItem("DiscordUserName");
+			if (username !== recipe.AddedBy)
+			{
+				SetErrorSnackbar(snackbarStates, "Cannot delete someone else's recipe");
+				return;
+			}
+
+			modalStates.OpenConfirmationModal({
+				title: "Confirm Delete Recipe?",
+				message: `Are you sure you want to delete this Recipe: ${recipe.Name}`,
+				callback: () => {
+					Fetch(HTTPMethod.POST, "./api/deleteRecipe", { id: recipe.Id, username: username });
+				}
+			});
 		}, modalStates, mutate);
 	}
-    
-	React.useEffect(() => {
-		if (authed !== true) return;
-        
-        OpenAddRecipe();
-		setAuthed(false);
-	}, [authed]);
 
 	React.useEffect(() => {
 		setFilteredData(data);
