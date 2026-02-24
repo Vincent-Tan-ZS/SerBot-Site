@@ -55,10 +55,11 @@ function Commands() {
 			const days = matches.filter(m => m.startsWith("["));
 			const options = matches.filter(m => m.startsWith("{"));
 
-			modalStates.setModalTitle("Copy Command");
-			modalStates.setModalMaxWidth("md");
-			modalStates.setModalChildren(<CopyCommandsModalChild command={list} options={options} mentions={mentions} days={days} />);
-			modalStates.setModalOpen(true);
+			modalStates.OpenModal({
+				title: "Copy Command",
+				maxWidth: "md",
+				children: <CopyCommandsModalChild command={list} options={options} mentions={mentions} days={days} />
+			});
 		}
 	}
 

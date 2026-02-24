@@ -38,6 +38,31 @@ function MyApp({ Component, pageProps }) {
     setModalHeight("auto");
   }
 
+  const OpenModal = ({title, height, maxWidth, children}) => {
+			setModalOpen(true);
+      if (title) setModalTitle(title);
+      if (height) setModalHeight(height);
+      if (maxWidth) setModalMaxWidth(maxWidth);
+      setModalChildren(children);
+  }
+
+  const CloseModal = (reset) => {
+    setModalOpen(false);
+
+    if (reset)
+    {
+      setModalTitle("");
+      setModalHeight("auto")
+      setModalChildren(<></>);
+    }
+  }
+
+  const OpenConfirmationModal = (title) => {
+    setModalOpen(true);
+    setModalTitle(title);
+    setModalHeight("250px");
+  }
+
   // Title
   const [title, setTitle] = React.useState("SerBot Site");
 
@@ -71,7 +96,7 @@ function MyApp({ Component, pageProps }) {
         
         
         <SnackbarContext.Provider value={{setSnackbarOpen, setSnackbarText, setSnackbarSeverity}}>
-          <ModalContext.Provider value={{setModalOpen, setModalTitle, setModalMaxWidth, setModalChildren, setModalHeight}}>
+          <ModalContext.Provider value={{OpenModal, CloseModal}}>
             <BaseModal open={modalOpen} OnClose={OnModalClosed} title={modalTitle} maxWidth={modalMaxWidth} height={modalHeight}>
               {modalChildren}
             </BaseModal>

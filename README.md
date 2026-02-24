@@ -1,3 +1,6 @@
+## v2.6.3.3
+- ModalContext now only sends in 2 methods to Open and Close Modals while still providing control over modal details
+
 ## v2.6.3.2
 - Moved paginations into a usePagination hook
 - Changed loading

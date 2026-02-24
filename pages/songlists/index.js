@@ -78,9 +78,6 @@ function SongLists(props)
 	const { data, isValidating, mutate } = useSWR("/api/songLists", ApiFetcher);
 
 	const modalStates = React.useContext(ModalContext);
-	const { authed, setAuthed } = React.useContext(AuthenticationContext);
-
-	const [nextModal, setNextModal] = React.useState("");
 
 	const [popoverAnchor, setPopoverAnchor] = React.useState(null);
 	const [popoverLink, setPopoverLink] = React.useState("");
@@ -88,45 +85,29 @@ function SongLists(props)
 	const OpenSongList = () => {
 		const userId = sessionStorage.getItem("DiscordUserId");
 
-		modalStates.setModalTitle("Song List");
-		modalStates.setModalHeight("500px");
-		modalStates.setModalChildren(<SongListModalChild list={data?.find(d => d.UserId === userId)?.SongList} refresh={mutate} />);
+		modalStates.OpenModal({
+			title: "Song List",
+			height: "500px",
+			children: <SongListModalChild list={data?.find(d => d.UserId === userId)?.SongList} refresh={mutate} />
+		});
 	}
 
 	const OpenImportPlaylist = () => {
-		modalStates.setModalTitle("Import Playlist");
-		modalStates.setModalHeight("300px");
-		modalStates.setModalChildren(<ImportSongsModalChild refresh={mutate} />);
+		modalStates.OpenModal({
+			title: "Import Playlist",
+			height: "300px",
+			children: <ImportSongsModalChild refresh={mutate} />
+		});
 	}
-
-	React.useEffect(() => {
-		if (authed !== true) return;
-
-		switch (nextModal)
-		{
-			case "SongList":
-				OpenSongList();
-				break;
-			case "ImportPlaylist":
-				OpenImportPlaylist();
-				break;
-		}
-
-		setAuthed(false);
-	}, [data, authed]);
 
 	const OnAddUpdateSongListClicked = () => {
 		ExecuteAuthAction(() => {
-			setNextModal("SongList");
-			modalStates.setModalOpen(true);
 			OpenSongList();
 		}, modalStates, mutate);
 	}
 
 	const OnImportClicked = async () => {
 		ExecuteAuthAction(() => {
-			setNextModal("ImportPlaylist")
-			modalStates.setModalOpen(true);
 			OpenImportPlaylist();
 		}, modalStates, mutate);
 	}

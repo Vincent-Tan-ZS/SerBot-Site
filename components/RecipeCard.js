@@ -49,9 +49,10 @@ export default function RecipeCard(props) {
 	}
 
 	const OnViewRecipe = () => {
-		modalStates.setModalOpen(true);
-		modalStates.setModalTitle(recipe.Name);
-		modalStates.setModalChildren(<ViewRecipeModalChild recipe={recipe} />);
+		modalStates.OpenModal({
+			title: recipe.Name,
+			children: <ViewRecipeModalChild recipe={recipe} />
+		});
 	}
 
 	return (

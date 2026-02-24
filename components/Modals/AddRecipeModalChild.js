@@ -50,8 +50,9 @@ export function AddRecipeModalChild(props) {
         _val.splice(delInd, 1);
         setVal(_val);
     }
+    
 	const OnCloseModal = () => {
-		modalStates.setModalOpen(false);
+        modalStates.CloseModal();
 	}
 
     const OnSave = () => {

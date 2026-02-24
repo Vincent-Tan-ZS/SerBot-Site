@@ -136,10 +136,11 @@ export const ExecuteAuthAction = (callback, modalStates, mutate) => {
 	}
 	else
 	{	
-		modalStates.setModalOpen(true);
-		modalStates.setModalTitle("User Confirmation");
-		modalStates.setModalHeight("auto");
-		modalStates.setModalChildren(<AuthCodeModalChild refresh={mutate} />);
+		modalStates.OpenModal({
+			title: "User Confirmation",
+			height: "auto",
+			children: <AuthCodeModalChild refresh={mutate} />
+		});
 	}
 }
 

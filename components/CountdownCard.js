@@ -150,8 +150,9 @@ export default function CountdownCard(props) {
 	const OnCardClicked = () => {
 		if (isMobile !== true) return;
 
-		modalStates.setModalOpen(true);
-		modalStates.setModalChildren(<MobileCardClickedModalChild name={countdown.Name} link={countdown.URL} />);
+		modalStates.OpenModal({
+			children: <MobileCardClickedModalChild name={countdown.Name} link={countdown.URL} />
+		});
 	}
 
 	return (

@@ -5,7 +5,6 @@ import {Add, Delete as DeleteIcon} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
 import useSWR from "swr";
 import LoadingBox from "../../components/LoadingBox";
-import RecipeCard from "../../components/RecipeCard";
 import HeaderBox from "../../components/HeaderBox";
 import SearchInput from "../../components/SearchInput";
 import { AddRecipeModalChild } from "../../components/Modals/AddRecipeModalChild";
@@ -13,6 +12,7 @@ import { ApiFetcher, ExecuteAuthAction } from "../../Utils";
 import { AuthenticationContext } from "../../contexts/AuthenticationContext";
 import usePagination from "../../hooks/usePagination";
 import AppPagination from "../../components/AppPagination";
+import ConfirmationModalChild from "../../components/Modals/ConfirmationModalChild";
 
 const helperText = "Search for a specific Recipe via name or ingredient";
 
@@ -47,21 +47,21 @@ function Recipes(props)
 
 	const { curPage, setCurPage, numberOfPages, pageList } = usePagination(7, data, filteredData, setFilteredData, filterText, transformListItem, filterPredicate); 
 
-    const OpenAddRecipe = () => {
-		modalStates.setModalTitle("Add Recipe");
-		modalStates.setModalHeight("500px");
-		modalStates.setModalChildren(<AddRecipeModalChild refresh={mutate} />);
-    }
-
     const OnAddRecipe = () => {
 		ExecuteAuthAction(() => {
-			modalStates.setModalOpen(true);
-			OpenAddRecipe();
+			modalStates.OpenModal({
+				title: "Add Recipe",
+				height: "500px",
+				children: <AddRecipeModalChild refresh={mutate} />
+			});
 		}, modalStates, mutate);
     }
 
 	const OnDeleteRecipe = (recipeId) => {
-		// alert(recipeId);
+		ExecuteAuthAction(() => {
+			const recipe = data.find(r => r.Id === recipeId);
+			console.log(recipe);
+		}, modalStates, mutate);
 	}
     
 	React.useEffect(() => {

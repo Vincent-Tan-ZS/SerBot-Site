@@ -107,7 +107,7 @@ export default function ImportSongsModalChild(props) {
 	}
 
 	const OnCloseModal = () => {
-		modalStates.setModalOpen(false);
+		modalStates.CloseModal();
 	}
 
 	return (
