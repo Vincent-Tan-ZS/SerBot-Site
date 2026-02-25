@@ -31,6 +31,12 @@ export const SelectMenuProps = {
 	}
 };
 
+export const DataCrudType = {
+	Read: 1,
+	Create: 2,
+	Update: 3
+}
+
 export const CopyToClipboard = (snackbarStates, text) => {
 	let _msg = "";
 	let _severity = SNACKBAR_SEVERITY_WARNING;

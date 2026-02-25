@@ -1,3 +1,13 @@
+## v2.6.4
+- Allow updating of recipes
+- Allow viewing of recipes
+- Added chip to ingredients and steps to display how many there are
+- Added frontend validation when saving recipe
+- Fixed issue where adding recipes cannot be done
+- Fixed issue where cancelling ingredients/steps will still show the new user input
+- Fixed issue where deleting ingredients/steps will delete the wrong one
+- Fixed issue where long text for ingredients/steps would overflow
+
 ## v2.6.3.4
 - Allow deletion of recipes
 
