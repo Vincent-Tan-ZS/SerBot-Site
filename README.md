@@ -1,3 +1,6 @@
+## v2.6.4.1
+- Removed unused npm package
+
 ## v2.6.4
 - Allow updating of recipes
 - Allow viewing of recipes
