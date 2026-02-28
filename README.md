@@ -1,3 +1,7 @@
+## v2.6.4.3
+- Pressing 'Enter' on Ingredients/Steps text field should now save and move to the next item 
+- Fixed various issues with deleting items
+
 ## v2.6.4.2
 - Added Mobile view (Only read)
 - Fixed Recipe List Items not checking/unchecking when clicked in empty space

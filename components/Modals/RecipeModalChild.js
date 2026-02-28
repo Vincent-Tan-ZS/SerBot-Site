@@ -1,5 +1,5 @@
 import { Box, Button, Checkbox, Chip, Collapse, FormControlLabel, FormGroup, IconButton, List, ListItemButton, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { ModalContext } from "../../contexts/ModalContext";
 import { Add, Close, Delete, Done, Edit, ExpandLess, ExpandMore } from "@mui/icons-material";
 import styled from "@emotion/styled";
@@ -26,10 +26,21 @@ const CollapsibleListTitle = (props) => {
 }
 
 const CollapsibleListItem = (props) => {
-    const { index, label, isEditing, onEdit, onEditCancel, onSubmit, onDelete, crudType } = props;
+    const { index, label, isEditing, onEdit, onEditCancel, onSubmit, onDelete, crudType, inputRefs, onSubmitAndMoveNext } = props;
 
     const [workingLabel, setWorkingLabel] = useState(label);
     const [originalLabel, setOriginalLabel] = useState(label);
+
+    const OnTextInputKeyDown = useCallback((e) => {
+        if (e.key === 'Enter')
+        {
+            if (onSubmitAndMoveNext) onSubmitAndMoveNext(index, workingLabel);
+        }
+    });
+
+    const OnSubmit = useCallback(() => {
+        if (onSubmit) onSubmit(index, workingLabel)
+    });
 
     const OnTextChanged = useCallback((e) => {
         setWorkingLabel(e.target.value);
@@ -52,7 +63,8 @@ const CollapsibleListItem = (props) => {
                 {
                     isEditing 
                     ? (
-                        <TextField size={"small"} fullWidth sx={{ px: 0 }} value={workingLabel} onChange={OnTextChanged} autoFocus />
+                        <TextField size={"small"} fullWidth autoFocus sx={{ px: 0 }} value={workingLabel} inputRef={(el) => inputRefs.current[index] = el}
+                            onChange={OnTextChanged} onKeyDown={OnTextInputKeyDown} />
                     )
                     : (
                         <FormGroup sx={{ width: '100%', maxWidth: crudType === DataCrudType.Read ? "100%" : "80%", overflowWrap: "anywhere" }}>
@@ -67,7 +79,7 @@ const CollapsibleListItem = (props) => {
                             isEditing
                             ? (
                                 <>
-                                    <IconButton onClick={() => onSubmit(index, workingLabel)}>
+                                    <IconButton onClick={OnSubmit}>
                                         <Done htmlColor="white" />
                                     </IconButton>
                                     <IconButton onClick={OnEditCancel}>
@@ -98,6 +110,8 @@ const CollapsibleList = (props) => {
 
     const [open, setOpen] = useState(true);
     const [editIndex, setEditIndex] = useState([]);
+    
+    const listItemRefs = useRef([]);
 
     const OnToggleOpen = useCallback(() => {
         setOpen(!open);
@@ -119,6 +133,14 @@ const CollapsibleList = (props) => {
         const newListItems = [...listItems];
         newListItems.splice(index, 1);
         setListItems(newListItems);
+
+        const newEditIndex = [...editIndex];
+        for (let i = 0; i < newEditIndex.length; ++i)
+        {
+            if (newEditIndex[i] <= index) continue;
+            newEditIndex[i]--;
+        }
+        setEditIndex(newEditIndex);
     });
 
     const OnEditClicked = useCallback((index) => {
@@ -142,6 +164,17 @@ const CollapsibleList = (props) => {
         OnEditCancelClicked(index);
     });
 
+    const OnSubmitAndMoveNext = useCallback((index, newItem) => {
+        OnSubmitClicked(index, newItem);
+
+        for (let i = 0; i < editIndex.length; ++i)
+        {
+            if (editIndex[i] <= index) continue;
+            listItemRefs.current[editIndex[i]].focus();
+            break;
+        }
+    });
+
     return (
         <>
             <Box>
@@ -162,7 +195,10 @@ const CollapsibleList = (props) => {
                                     onEdit={() => OnEditClicked(index)}
                                     onEditCancel={() => OnEditCancelClicked(index)}
                                     onDelete={() => OnDeleteClicked(index)} 
-                                    onSubmit={OnSubmitClicked} />)
+                                    onSubmit={OnSubmitClicked}
+                                    inputRefs={listItemRefs}
+                                    onSubmitAndMoveNext={OnSubmitAndMoveNext} />
+                                )
                             }
                         </Stack>
                     }
