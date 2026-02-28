@@ -1,3 +1,7 @@
+## v2.6.4.4
+- Fixed useCallback dependenceis 
+- Fixed missing key prop
+
 ## v2.6.4.3
 - Pressing 'Enter' on Ingredients/Steps text field should now save and move to the next item 
 - Fixed various issues with deleting items

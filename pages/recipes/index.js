@@ -196,7 +196,7 @@ function Recipes(props)
 								{
 									(!isValidating && data.length > 0) &&
 									data.map((r) => (
-										<MobileRecipeListItem recipe={r} onClick={() => OnOpenRecipe(r)} />
+										<MobileRecipeListItem key={r.Name} recipe={r} onClick={() => OnOpenRecipe(r)} />
 									))
 								}
 							</Stack>

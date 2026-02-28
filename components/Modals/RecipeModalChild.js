@@ -36,26 +36,26 @@ const CollapsibleListItem = (props) => {
         {
             if (onSubmitAndMoveNext) onSubmitAndMoveNext(index, workingLabel);
         }
-    });
+    }, [onSubmitAndMoveNext, index, workingLabel]);
 
     const OnSubmit = useCallback(() => {
         if (onSubmit) onSubmit(index, workingLabel)
-    });
+    }, [onSubmit, index, workingLabel]);
 
     const OnTextChanged = useCallback((e) => {
         setWorkingLabel(e.target.value);
-    });
+    }, []);
 
     const OnEdit = useCallback(() => {
         setOriginalLabel(workingLabel);
         if (onEdit) onEdit();
-    });
+    }, [workingLabel, onEdit]);
 
     const OnEditCancel = useCallback(() => {
         setWorkingLabel(originalLabel);
         setOriginalLabel("");
         if (onEditCancel) onEditCancel();
-    });
+    }, [originalLabel, onEditCancel]);
 
     return (
         <Paper sx={{ px: 2, border: "1px solid #aaa", background: "linear-gradient(90deg, #222, #444, #222) !important" }}>
@@ -115,7 +115,7 @@ const CollapsibleList = (props) => {
 
     const OnToggleOpen = useCallback(() => {
         setOpen(!open);
-    });
+    }, [open]);
 
     const OnAddClicked = useCallback(() => {
         const newListItems = [...listItems];
@@ -127,7 +127,7 @@ const CollapsibleList = (props) => {
         setEditIndex(newEditIndex);
 
         setOpen(true);
-    });
+    }, [listItems, editIndex]);
 
     const OnDeleteClicked = useCallback((index) => {
         const newListItems = [...listItems];
@@ -141,20 +141,20 @@ const CollapsibleList = (props) => {
             newEditIndex[i]--;
         }
         setEditIndex(newEditIndex);
-    });
+    }, [listItems, editIndex]);
 
     const OnEditClicked = useCallback((index) => {
         const newEditIndex = [...editIndex];
         newEditIndex.push(index);
         setEditIndex(newEditIndex);
-    });
+    }, [editIndex]);
 
     const OnEditCancelClicked = useCallback((index) => {
         const newEditIndex = [...editIndex];
         const arrIndex = newEditIndex.indexOf(index);
         newEditIndex.splice(arrIndex, 1);
         setEditIndex(newEditIndex);
-    });
+    }, [editIndex]);
 
     const OnSubmitClicked = useCallback((index, newItem) => {
         const newListItems = [...listItems];
@@ -162,7 +162,7 @@ const CollapsibleList = (props) => {
         setListItems(newListItems);
 
         OnEditCancelClicked(index);
-    });
+    }, [listItems]);
 
     const OnSubmitAndMoveNext = useCallback((index, newItem) => {
         OnSubmitClicked(index, newItem);
@@ -173,7 +173,7 @@ const CollapsibleList = (props) => {
             listItemRefs.current[editIndex[i]].focus();
             break;
         }
-    });
+    }, [listItems, editIndex]);
 
     return (
         <>
@@ -234,7 +234,7 @@ export function RecipeModalChild(props) {
 
     const OnNameChanged = useCallback((e) => {
         setRecipeName(e.target.value);
-    });
+    }, []);
     
 	return (
         <Stack gap={1} justifyContent={"space-between"}>

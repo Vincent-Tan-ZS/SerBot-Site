@@ -81,7 +81,7 @@ function MyApp({ Component, pageProps }) {
   const OnConfirmationCallbackClick = useCallback((callback) => {
     CloseModal();
     if (callback) callback();
-  });
+  }, []);
 
   // Title
   const [title, setTitle] = React.useState("SerBot Site");
