@@ -19,7 +19,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => `
 
 	.MuiDialogContent-root {
 		background: #24252C;
-		padding-top: 32px !important;
+		padding-top: 8px !important;
 
 		.MuiFormLabel-root {
 			color: ${theme.palette.primary.main};

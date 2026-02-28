@@ -55,7 +55,7 @@ const CollapsibleListItem = (props) => {
                         <TextField size={"small"} fullWidth sx={{ px: 0 }} value={workingLabel} onChange={OnTextChanged} autoFocus />
                     )
                     : (
-                        <FormGroup sx={{ maxWidth: crudType === DataCrudType.Read ? "100%" : "80%", overflowWrap: "anywhere" }}>
+                        <FormGroup sx={{ width: '100%', maxWidth: crudType === DataCrudType.Read ? "100%" : "80%", overflowWrap: "anywhere" }}>
                             <FormControlLabel sx={{ color: "white" }} control={<StyledCheckbox sx={{ display: crudType !== DataCrudType.Read ? "none" : "block" }} />} label={workingLabel} />
                         </FormGroup>
                     )

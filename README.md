@@ -1,3 +1,7 @@
+## v2.6.4.2
+- Added Mobile view (Only read)
+- Fixed Recipe List Items not checking/unchecking when clicked in empty space
+
 ## v2.6.4.1
 - Removed unused npm package
 

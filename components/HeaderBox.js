@@ -8,7 +8,7 @@ const StyledDivider = styled(Divider)`
 export default function HeaderBox(props)
 {
 	return (
-		<Stack direction={"column"} gap={2}>
+		<Stack sx={props.sx} direction={"column"} gap={2}>
 			{props.children}
 			<StyledDivider />
 		</Stack>

@@ -13,7 +13,7 @@ import { AuthenticationContext } from '../contexts/AuthenticationContext';
 import ConfirmationModalChild from '../components/Modals/ConfirmationModalChild';
 
 function MyApp({ Component, pageProps }) {
-	const isMobile = useMediaQuery("(max-width:600px)");
+	const isMobile = useMediaQuery("(max-width:768px)");
 
   // Authentication
   const [authed, setAuthed] = React.useState(false);

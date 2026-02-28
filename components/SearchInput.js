@@ -1,10 +1,8 @@
 import styled from "@emotion/styled";
-import { Box, InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 
 const SearchInputStyle = styled(TextField)`
-	width: 60%;
-
 	.MuiInputBase-root {
 		color: white;
 	}
@@ -25,7 +23,7 @@ const SearchInputStyle = styled(TextField)`
 
 export default function SearchInput(props)
 {
-	const { filterState, helperText } = props;
+	const { filterState, helperText, fullWidth } = props;
 	const { filterText, setFilterText } = filterState;
 
 	const OnInputChanged = (e) => {
@@ -38,6 +36,7 @@ export default function SearchInput(props)
 			value={filterText}
 			onChange={OnInputChanged}
 			placeholder={helperText}
+			sx={{ width: fullWidth ? '100%' : '60%' }}
 			InputProps={{
 				endAdornment: (
 					<InputAdornment position="end" sx={{

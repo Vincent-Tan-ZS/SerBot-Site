@@ -1,7 +1,7 @@
-import {Button, CircularProgress, IconButton, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {Button, CircularProgress, Fab, IconButton, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import AppBody from "../../components/AppBody";
 import React from "react";
-import {Add, Edit as EditIcon, Delete as DeleteIcon} from "@mui/icons-material";
+import {Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon} from "@mui/icons-material";
 import {ModalContext} from "../../contexts/ModalContext";
 import useSWR from "swr";
 import LoadingBox from "../../components/LoadingBox";
@@ -12,6 +12,8 @@ import { ApiFetcher, DataCrudType, ExecuteAuthAction, Fetch, HTTPMethod, SetErro
 import usePagination from "../../hooks/usePagination";
 import AppPagination from "../../components/AppPagination";
 import { SnackbarContext } from "../../contexts/SnackbarContext";
+import { MobileContext } from "../../contexts/MobileContext";
+import MobileRecipeListItem from "../../components/Mobile/MobileRecipeListItem";
 
 const helperText = "Search for a specific Recipe via name or ingredient";
 
@@ -81,6 +83,7 @@ function Recipes(props)
 
 	const modalStates = React.useContext(ModalContext);
 	const snackbarStates = React.useContext(SnackbarContext);
+	const isMobile = React.useContext(MobileContext);
 
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
@@ -105,8 +108,7 @@ function Recipes(props)
 		}, modalStates, mutate);
     }
 
-	const OnOpenRecipe = (recipeId) => {
-		const recipe = data.find(r => r.Id === recipeId);
+	const OnOpenRecipe = (recipe) => {
 		modalStates.OpenModal({
 			title: recipe.Name,
 			height: "500px",
@@ -176,11 +178,36 @@ function Recipes(props)
 		<>
 			<AppBody>
 				{
-					isValidating === true &&
-					<LoadingBox />
+					isMobile &&
+					<>
+						<Stack spacing={1}>
+							<HeaderBox sx={{ pt: 2 }}>
+								<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} fullWidth />
+							</HeaderBox>
+							<Stack gap={1}>
+								{
+									isValidating &&
+									<LoadingBox />
+								}
+								{
+									(!isValidating && data.length <= 0) &&
+									<Typography>No recipes found</Typography>
+								}
+								{
+									(!isValidating && data.length > 0) &&
+									data.map((r) => (
+										<MobileRecipeListItem recipe={r} onClick={() => OnOpenRecipe(r)} />
+									))
+								}
+							</Stack>
+						</Stack>
+						{/* <Fab color={"primary"} sx={{ position: 'fixed', right: '2%', bottom: '2%' }} size={"small"} onClick={OnAddRecipe}>
+							<AddIcon />
+						</Fab> */}
+					</>
 				}
 				{
-					isValidating !== true &&
+					!isMobile &&
 					<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
 						<Stack spacing={1} height='100%'>
 							<HeaderBox>
@@ -188,7 +215,7 @@ function Recipes(props)
 							</HeaderBox>
 							<Stack direction={"row"} spacing={1} paddingTop={1} paddingBottom={1}>
 								<Button variant={"contained"} onClick={OnAddRecipe}>
-									<Add fontSize="small" />&nbsp;Add New Recipe
+									<AddIcon fontSize="small" />&nbsp;Add New Recipe
 								</Button>
 							</Stack>
 								<RecipeTable>
@@ -224,7 +251,7 @@ function Recipes(props)
 												pageList.map(r => {
 													return (
 														<TableRow key={`recipe=${r.Name}`}>
-															<TableCell sx={{ cursor: "pointer" }} onClick={() => OnOpenRecipe(r.Id)}>
+															<TableCell sx={{ cursor: "pointer" }} onClick={() => OnOpenRecipe(r)}>
 																<Stack>
 																	<Typography color={"white"}>{r.Name} <em style={{fontSize: "12px", color: "gray"}}>by {r.AddedBy}</em></Typography>
 																	<Typography color={"white"} variant={"caption"} noWrap sx={{ maxWidth: 600 }}>{r.Ingredients.join(", ")}</Typography>
