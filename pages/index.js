@@ -17,7 +17,7 @@ function Home() {
       {
         isValidating !== true &&
         <Stack gap={1}>
-          <Typography variant={"h3"}>What's New</Typography>
+          <Typography variant={"h3"}>What&apos;s New</Typography>
           <Stack alignItems={'center'} justifyContent={'center'} direction={'column'} spacing={2}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
