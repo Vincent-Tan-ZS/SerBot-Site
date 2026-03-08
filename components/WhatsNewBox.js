@@ -34,12 +34,12 @@ export default function WhatsNewBox(props) {
 				<Stack gap={1}>
 					{
 						Object.entries(groupedData).map(([date, changes]) => (
-							<Stack gap={1}>
+							<Stack gap={1} key={`whats-new-${title}-${date}`}>
 								<Typography variant={"h6"} color={"#1A7AFF"}>{date}</Typography>
 								<List dense disablePadding>
 									{
-										changes.map((c) => (
-											<ListItem>
+										changes.map((c, i) => (
+											<ListItem key={`${date}-${i}`}>
 												<ListItemIcon  sx={{ minWidth: "36px" }}>
 													<Circle htmlColor={"white"} fontSize={"6px"} />
 												</ListItemIcon>
