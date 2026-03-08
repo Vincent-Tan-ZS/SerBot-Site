@@ -165,7 +165,7 @@ function Commands() {
 					isValidating !== true &&
 					<Stack spacing={1} flexDirection={"column"} height={"100%"}>
 						<HeaderBox>
-							<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} fullWidth />
+							<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} fullWidth={isMobile} />
 						</HeaderBox>
 
 						{
