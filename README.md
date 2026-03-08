@@ -1,3 +1,6 @@
+## v2.7
+- Revamped Commands page
+
 ## v2.6.4.4
 - Fixed useCallback dependenceis 
 - Fixed missing key prop

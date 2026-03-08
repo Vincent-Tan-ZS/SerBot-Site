@@ -1,33 +1,57 @@
-import {CircularProgress, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {Chip, Divider, IconButton, ImageList, ImageListItem, List, ListItem, ListItemText, Paper, Stack, Typography} from "@mui/material";
 import { ContentCopy as CopyIcon } from '@mui/icons-material';
-import React from "react";
+import React, { useMemo } from "react";
 import AppBody from "../../components/AppBody";
 import useSWRImmutable from "swr/immutable"; 
 import {ApiFetcher, CopyToClipboard } from "../../Utils";
 import SearchInput from "../../components/SearchInput";
-import AppPagination from "../../components/AppPagination";
-import AppTableContainer from "../../components/AppTableContainer";
 import HeaderBox from "../../components/HeaderBox";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
 import {ModalContext} from "../../contexts/ModalContext";
 import {CopyCommandsModalChild} from "../../components/Modals/CopyCommandsModalChild";
 import LoadingBox from "../../components/LoadingBox";
-import usePagination from "../../hooks/usePagination";
 
 const helperText = "Search for a specific Command via Title or Description";
 
-const transformListItem = (li) => {
-	let _usage = li.Usage.map(u => `ser ${li.List[0]} ${u}`.trim());
-	
-	return {
-		Title: li.Title,
-		List: li.List,
-		Description: li.Description,
-		Usage: _usage
-	}
-};
+const CommandCard = (props) => {
+	const { command, onCopyClicked } = props;
 
-const filterPredicate = (c, filterText) => c.Title.toLowerCase().includes(filterText.toLowerCase()) || c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined;
+	const MappedUsages = useMemo(() => {
+		return command.Usage.map((usage) => `ser ${command.List[0]} ${usage}`.trim());
+	}, [command.List, command.Usage]);
+
+	return (
+		<Paper elevation={2} sx={{ maxWidth: '260px', minHeight: '260px', maxHeight: '300px', height: '300px', background: '#111F42', padding: '8px', display: 'flex', flexDirection: "column", border: 'solid #1A7AFF 1px' }}>
+			<Stack direction={"row"} gap={1} p={1} >
+				<Typography color={"white"}>
+					{command.Title}
+				</Typography>
+				<Stack direction={"row"} gap={1} sx={{ scrollbarWidth: "thin", overflowX: 'auto' }}>
+					{command.List.map(li => <Chip key={li} size={"small"} variant={"outlined"} label={li} sx={{color: "white", borderRadius: "8px", background: "dimgray" }} />)}
+				</Stack>
+			</Stack>
+			<Divider sx={{ background: '#1A7AFF' }} />
+			<Stack p={1} gap={1} sx={{ flex: 1, minHeight: 0 }}>
+				<Typography variant={"caption"} color={"white"}>{command.Description}</Typography>
+				<Paper sx={{ overflowY: 'auto', flex: 1, minHeight: 0, background: 'black' }}>
+					<List disablePadding sx={{ background: '#0044A3' }}>
+						{MappedUsages.map((usage) => (
+							<ListItem key={usage} sx={{ border: '#1A7AFF solid 2px' }} dense secondaryAction={
+								<IconButton size={"small"} edge="end" onClick={onCopyClicked(usage)}>
+									<CopyIcon htmlColor="white" />
+								</IconButton>
+							}>
+								<ListItemText sx={{ color: "white" }}>
+									{usage}
+								</ListItemText>
+							</ListItem>
+						))}
+					</List>
+				</Paper>
+			</Stack>
+		</Paper>
+	)
+}
 
 function Commands() {
 	const snackbarStates = React.useContext(SnackbarContext);
@@ -40,14 +64,19 @@ function Commands() {
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
 
-	const { curPage, setCurPage, numberOfPages, pageList } = usePagination(10, data, commandList, setCommandList, filterText, transformListItem, filterPredicate); 
+	React.useEffect(() => {
+		const newCommandList = (data ?? []).filter((c) => 
+			c.Title.toLowerCase().includes(filterText.toLowerCase()) || c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined
+		);
+		setCommandList(newCommandList);
+	}, [filterText, data]);
 
-	const OnCopyClicked = (list) => () => {
-		const matches = list.match(/{.+?}|@\w+|[[]\w+?]/g);
+	const OnCopyClicked = (usage) => () => {
+		const matches = usage.match(/{.+?}|@\w+|[[]\w+?]/g);
 
 		if (matches === null)
 		{
-			CopyToClipboard(snackbarStates, list);
+			CopyToClipboard(snackbarStates, usage);
 		}
 		else
 		{
@@ -58,7 +87,7 @@ function Commands() {
 			modalStates.OpenModal({
 				title: "Copy Command",
 				maxWidth: "md",
-				children: <CopyCommandsModalChild command={list} options={options} mentions={mentions} days={days} />
+				children: <CopyCommandsModalChild command={usage} options={options} mentions={mentions} days={days} />
 			});
 		}
 	}
@@ -72,75 +101,24 @@ function Commands() {
 				}
 				{
 					isValidating !== true &&
-					<Stack spacing={1} flexDirection={"column"} height={"100%"} justifyContent={"space-between"}>
-						<Stack spacing={2} overflow={'auto'}>
-							<HeaderBox>
-								<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
-							</HeaderBox>
-							<AppTableContainer>
-								<Table stickyHeader>
-									<colgroup>
-										<col width={"20%"} />
-										<col width={"10%"} />
-										<col width={"50%"} />
-										<col width={"20%"} />
-									</colgroup>
-									<TableHead>
-										<TableRow>
-											<TableCell>Title</TableCell>
-											<TableCell>Commands</TableCell>
-											<TableCell>Description</TableCell>
-											<TableCell>Usage</TableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										{
-											isValidating === true &&
-											<TableRow>
-												<TableCell colSpan={4} align={"center"}>
-													<CircularProgress />
-												</TableCell>
-											</TableRow>
-										}
-										{
-											(isValidating === false && pageList.length <= 0) &&
-											<TableRow>
-												<TableCell colSpan={4} align={"center"}>
-													Cannot find list :(
-												</TableCell>
-											</TableRow>
-										}
-										{
-											(isValidating === false && pageList.length > 0) &&
-											pageList.map(li => {
-												return (
-													<TableRow key={`command-${li.Title}`}>
-														<TableCell size="small">{li.Title}</TableCell>
-														<TableCell size="small">{li.List.join(", ")}</TableCell>
-														<TableCell size="small">{li.Description}</TableCell>
-														<TableCell size="small">
-															{
-																li.Usage.map((l) => {
-																	return (
-																		<Stack key={`command-${li.Title}-usage-${l}`} spacing={1} flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"}>
-																			<Typography>{l}</Typography>
-																			<IconButton onClick={OnCopyClicked(l)} size={"small"}>
-																				<CopyIcon />
-																			</IconButton>
-																		</Stack>
-																	)
-																})
-															}
-														</TableCell>
-													</TableRow>
-												)
-											})
-										}
-									</TableBody>
-								</Table>
-							</AppTableContainer>
-						</Stack>
-						<AppPagination pageState={{curPage, setCurPage}} total={numberOfPages} />
+					<Stack spacing={1} flexDirection={"column"} height={"100%"}>
+						<HeaderBox>
+							<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} />
+						</HeaderBox>
+						
+						{commandList.length > 0 &&
+							<ImageList cols={4} gap={12}>
+								{
+									commandList.map(command => {
+										return (
+											<ImageListItem>
+												<CommandCard key={command.Title} command={command} onCopyClicked={OnCopyClicked} />
+											</ImageListItem>
+										)
+									})
+								}
+							</ImageList>
+						}
 					</Stack>
 				}
 			</AppBody>
