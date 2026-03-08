@@ -115,7 +115,7 @@ function Commands() {
 
 	React.useEffect(() => {
 		const newCommandList = (data ?? []).filter((c) => 
-			c.Title.toLowerCase().includes(filterText.toLowerCase()) || c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined
+			c.Title?.toLowerCase().includes(filterText.toLowerCase()) || c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined
 		);
 		setCommandList(newCommandList);
 	}, [filterText, data]);
