@@ -1,3 +1,6 @@
+## v2.7.3.1
+- Reworked What's New section in homepage
+
 ## v2.7.3
 - Reworked Copy Command modal
 

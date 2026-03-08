@@ -1,13 +1,12 @@
-import {Box, Grid, Stack} from "@mui/material";
+import {Grid, Stack, Typography} from "@mui/material";
 import AppBody from "../components/AppBody";
 import WhatsNewBox from "../components/WhatsNewBox";
 import useSWRImmutable from "swr/immutable";
 import LoadingBox from "../components/LoadingBox";
-
-const fetcher = (...args) => fetch(...args).then(res => res.json());
+import { ApiFetcher } from "../Utils";
 
 function Home() {
-	const { data, isValidating } = useSWRImmutable("/api/newupdates", fetcher);
+	const { data, isValidating } = useSWRImmutable("/api/newupdates", ApiFetcher);
 
   return (
     <AppBody>
@@ -17,8 +16,8 @@ function Home() {
       }
       {
         isValidating !== true &&
-        <>
-          <Box height={'20%'}></Box>
+        <Stack gap={1}>
+          <Typography variant={"h3"}>What's New</Typography>
           <Stack alignItems={'center'} justifyContent={'center'} direction={'column'} spacing={2}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
@@ -29,7 +28,7 @@ function Home() {
               </Grid>
             </Grid>
           </Stack>
-        </>
+        </Stack>
       }
     </AppBody>
   )

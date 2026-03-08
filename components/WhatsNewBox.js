@@ -1,26 +1,17 @@
-import {Box, List, ListItem, Paper, Typography, styled} from "@mui/material";
+import { Circle } from "@mui/icons-material";
+import {Divider, List, ListItem, ListItemIcon, ListItemText, Paper, Stack, styled, Typography} from "@mui/material";
 import {format} from "date-fns";
+import { useMemo } from "react";
 
 const WhatsNewListPaper = styled(Paper)`
 	height: 200px;
 	border: 2px solid #0E4686;
 	background: black;
 	overflow-y: auto;
+	padding: 8px;
 
 	.MuiList-root {
-		padding-top: 0px;
-		padding-bottom: 0px;
-		font-size: 1.2rem;
-
 		.MuiListItem-root {
-			&:nth-of-type(odd) {
-				background: #0c0c0c;
-			}
-
-			&:nth-of-type(even) {
-				background: #191919;
-			}
-
 			color: white;
 		}
 	}
@@ -28,19 +19,40 @@ const WhatsNewListPaper = styled(Paper)`
 
 export default function WhatsNewBox(props) {
 	const { title, data } = props;
-	
-	const sortedData = data.sort((a, b) => new Date(b.FeatureDate) - new Date(a.FeatureDate)).slice(0, 10);
+
+	const groupedData = useMemo(() => {
+		const sortedData = data.sort((a, b) => new Date(b.FeatureDate) - new Date(a.FeatureDate));
+		return Object.groupBy(sortedData, ({ FeatureDate }) => format(new Date(FeatureDate), "dd/MM/yyyy"));
+	}
+	, [data]);
 
 	return (
-		<Box>
-			<Typography variant={"h4"}>What&apos;s New: {title}</Typography>
-			<WhatsNewListPaper>
-				<List>
+		<WhatsNewListPaper>
+			<Stack gap={1}>
+				<Typography color={"white"} variant={"h5"}>{title}</Typography>
+				<Divider sx={{ borderColor: "gray" }} />
+				<Stack gap={1}>
 					{
-						sortedData.map((d, ind) => <ListItem key={`whatsnew-${title}-${ind}`}>[{format(new Date(d.FeatureDate), "dd/MM/yyyy")}] {d.FeatureUpdateMessage}</ListItem>)
+						Object.entries(groupedData).map(([date, changes]) => (
+							<Stack gap={1}>
+								<Typography variant={"h6"} color={"#1A7AFF"}>{date}</Typography>
+								<List dense disablePadding>
+									{
+										changes.map((c) => (
+											<ListItem>
+												<ListItemIcon  sx={{ minWidth: "36px" }}>
+													<Circle htmlColor={"white"} fontSize={"6px"} />
+												</ListItemIcon>
+												<ListItemText>{c.FeatureUpdateMessage}</ListItemText>
+											</ListItem>
+										))
+									}
+								</List>
+							</Stack>
+						))
 					}
-				</List>
-			</WhatsNewListPaper>
-		</Box>
+				</Stack>
+			</Stack>
+		</WhatsNewListPaper>
 	)
 }
