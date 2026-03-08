@@ -1,3 +1,7 @@
+## v2.7.3.3
+- Added sorting predicate to usePagination hook
+- Countdown uses the usePagination hook now
+
 ## v2.7.3.2
 - Fixed Recipe page overflowing in mobile
 - Fixed Recipe page not filtering in mobile

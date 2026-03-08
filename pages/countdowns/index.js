@@ -2,18 +2,36 @@ import React from "react";
 import useSWRImmutable from "swr/immutable";
 import AppBody from "../../components/AppBody";
 import AppPagination from "../../components/AppPagination";
-import {ApiFetcher, GetNumberOfPages} from "../../Utils";
+import {ApiFetcher} from "../../Utils";
 import {Box, Grid, IconButton, Stack, Tooltip} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
-import {differenceInDays, format, isAfter, parse} from "date-fns";
+import {differenceInDays, format, isAfter} from "date-fns";
 import CountdownCard from "../../components/CountdownCard";
 import {MobileContext} from "../../contexts/MobileContext";
 import { ClearAll, Sort as SortIcon } from "@mui/icons-material";
 import LoadingBox from "../../components/LoadingBox";
+import usePagination from "../../hooks/usePagination";
 
 const noOfCards = 4;
 const helperText = "Search for a specific Countdown via Name";
+
+const transformListItem = (cd) => {
+	let date = new Date(cd.Date);
+	let diff = differenceInDays(date, new Date());
+
+	return {
+		...cd,
+		Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
+	}
+};
+const filterPredicate = (cd, filterText) => cd.Name.toLowerCase().includes(filterText.toLowerCase());
+const sortPredicate = (a, b) => {
+	const aDate = new Date(a.Date);
+	const bDate = new Date(b.Date);
+
+	return isAfter(aDate, bDate) ? 1 : -1;
+}
 
 function Countdowns ()
 {
@@ -25,67 +43,10 @@ function Countdowns ()
 	// Filter States
 	const [filterText, setFilterText] = React.useState("");
 
-	// Pagination States
-	const [curPage, setCurPage] = React.useState(1);
-	const [numberOfPages, setNumberOfPages] = React.useState(1);
-	const [pageList, setPageList] = React.useState([]);
+	// Sorting States
 	const [sortByDate, setSortByDate] = React.useState(false);
 
-	React.useEffect(() => {
-		let _list = [];
-		let _numberOfPages = 0;
-
-		if (data !== undefined)
-		{
-			_list = data.map((l) => {
-				let date = new Date(l.Date);
-				let diff = differenceInDays(date, new Date());
-
-				return {
-					...l,
-					Date: `${format(date, "d MMMM y")} (${diff > 0 ? `${diff} Days Left` : "Out Now!"})`
-				}
-			});
-			_numberOfPages = GetNumberOfPages(_list, noOfCards);
-		}
-
-		setCountdownList(_list);
-		setNumberOfPages(_numberOfPages);
-		setCurPage(1);
-	}, [data]);
-
-	React.useEffect(() => {
-		if (countdownList.length <= 0) return;
-
-		let _filtered = countdownList.filter(c => c.Name.toLowerCase().includes(filterText.toLowerCase()));
-
-		if (sortByDate === true)
-		{
-			const ConvertDate = (date) => {
-				let index = date.indexOf(" (");
-				let dateStr = date.substring(0, index);
-
-				return parse(dateStr, "d MMMM y", new Date());
-			}
-
-			_filtered = _filtered.sort((a, b) => {
-				let aDate = ConvertDate(a.Date);
-				let bDate = ConvertDate(b.Date);
-
-				return isAfter(aDate, bDate) ? 1 : -1;
-			});
-		}
-
-		let _pageList = GetPageList(_filtered);
-		let _numberOfPages = GetNumberOfPages(_filtered, noOfCards);
-
-		setNumberOfPages(_numberOfPages);
-		setPageList(_pageList);
-	}, [countdownList, filterText, sortByDate, curPage]);
-
-	const GetPageList = (_list, _page = curPage) => {
-		return _list.slice((_page - 1) * noOfCards, _page * noOfCards);
-	}
+	const { curPage, setCurPage, numberOfPages, pageList } = usePagination(noOfCards, data, countdownList, setCountdownList, filterText, transformListItem, filterPredicate, sortByDate ? sortPredicate : undefined);
 
 	const OnSortClicked = () => {
 		setSortByDate(!sortByDate);
