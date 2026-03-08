@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { InputAdornment, TextField } from "@mui/material";
+import { debounce, InputAdornment, TextField } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
+import { useCallback, useState } from "react";
 
 const SearchInputStyle = styled(TextField)`
 	.MuiInputBase-root {
@@ -26,14 +27,21 @@ export default function SearchInput(props)
 	const { filterState, helperText, fullWidth } = props;
 	const { filterText, setFilterText } = filterState;
 
+	const [localText, setLocalText] = useState(filterText);
+
 	const OnInputChanged = (e) => {
-		setFilterText(e.target.value);
+		setLocalText(e.target.value);
+		debouncedChangeHandler(e.target.value);
 	}
+
+	const debouncedChangeHandler = useCallback(
+		debounce((searchValue) => setFilterText(searchValue), 500),
+	[]);
 
 	return (
 		<SearchInputStyle variant="outlined"
 			size={"small"}
-			value={filterText}
+			value={localText}
 			onChange={OnInputChanged}
 			placeholder={helperText}
 			sx={{ width: fullWidth ? '100%' : '60%' }}

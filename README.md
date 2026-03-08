@@ -1,3 +1,6 @@
+## v2.7.2
+- Added debounce to search input
+
 ## v2.7.1
 - Revamped Mobile Commands page
 
