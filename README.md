@@ -1,3 +1,7 @@
+## v2.7.3.2
+- Fixed Recipe page overflowing in mobile
+- Fixed Recipe page not filtering in mobile
+
 ## v2.7.3.1
 - Reworked What's New section in homepage
 

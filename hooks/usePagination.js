@@ -28,13 +28,14 @@ export default function usePagination(noOfRows, data, list, setList, filterText,
     }, [list, curPage]);
 
     React.useEffect(() => {
-        if (list === undefined || list.length <= 0) return;
+        if (data === undefined || data.length <= 0) return;
 
-        let _filtered = list.filter(c => filterPredicate(c, filterText));
+        let _filtered = data.filter(c => filterPredicate(c, filterText));
 
         let _pageList = GetPageList(_filtered, 1);
         let _numberOfPages = GetNumberOfPages(_filtered, noOfRows);
 
+        setList(_filtered);
         setCurPage(1);
         setNumberOfPages(_numberOfPages);
         setPageList(_pageList);

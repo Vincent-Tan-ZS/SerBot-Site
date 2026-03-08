@@ -173,29 +173,29 @@ function Recipes(props)
 	React.useEffect(() => {
 		setFilteredData(data);
 	}, [data]);
-
+	
 	return (
 		<>
 			<AppBody>
 				{
 					isMobile &&
 					<>
-						<Stack spacing={1}>
+						<Stack spacing={1} sx={{ height: '100%' }}>
 							<HeaderBox sx={{ pt: 2 }}>
 								<SearchInput filterState={{filterText, setFilterText}} helperText={helperText} fullWidth />
 							</HeaderBox>
-							<Stack gap={1}>
+							<Stack gap={1} height={'100%'} sx={{ overflowY: 'auto' }}>
 								{
 									isValidating &&
 									<LoadingBox />
 								}
 								{
-									(!isValidating && data.length <= 0) &&
+									(!isValidating && filteredData?.length <= 0) &&
 									<Typography>No recipes found</Typography>
 								}
 								{
-									(!isValidating && data.length > 0) &&
-									data.map((r) => (
+									(!isValidating && filteredData?.length > 0) &&
+									filteredData.map((r) => (
 										<MobileRecipeListItem key={r.Name} recipe={r} onClick={() => OnOpenRecipe(r)} />
 									))
 								}
