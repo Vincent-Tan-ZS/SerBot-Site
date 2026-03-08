@@ -1,3 +1,7 @@
+## v2.7.2.1
+- Reduced debounce time
+- Search bar in Commands page now full width
+
 ## v2.7.2
 - Added debounce to search input
 

@@ -35,7 +35,7 @@ export default function SearchInput(props)
 	}
 
 	const debouncedChangeHandler = useCallback(
-		debounce((searchValue) => setFilterText(searchValue), 500),
+		debounce((searchValue) => setFilterText(searchValue), 350),
 	[]);
 
 	return (
