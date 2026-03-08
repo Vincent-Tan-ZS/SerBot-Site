@@ -1,3 +1,6 @@
+## v2.7.3
+- Reworked Copy Command modal
+
 ## v2.7.2.1
 - Reduced debounce time
 - Search bar in Commands page now full width

@@ -3,7 +3,7 @@ import { ContentCopy as CopyIcon, ExpandMore } from '@mui/icons-material';
 import React, { useMemo } from "react";
 import AppBody from "../../components/AppBody";
 import useSWRImmutable from "swr/immutable"; 
-import {ApiFetcher, CopyToClipboard } from "../../Utils";
+import {ApiFetcher, CopyToClipboard, FeatureType } from "../../Utils";
 import SearchInput from "../../components/SearchInput";
 import HeaderBox from "../../components/HeaderBox";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
@@ -12,7 +12,7 @@ import {CopyCommandsModalChild} from "../../components/Modals/CopyCommandsModalC
 import LoadingBox from "../../components/LoadingBox";
 import { MobileContext } from "../../contexts/MobileContext";
 
-const helperText = "Search for a specific Command via Title or Description";
+const helperText = "Search for a specific Command via Title or command option";
 
 const CommandChips = (props) => {
 	const { commandList } = props;
@@ -129,14 +129,27 @@ function Commands() {
 		}
 		else
 		{
-			const mentions = matches.filter(m => m.startsWith("@"));
-			const days = matches.filter(m => m.startsWith("["));
-			const options = matches.filter(m => m.startsWith("{"));
+			const selectMatches = matches.filter(m => m.startsWith("["));
+			let selectOptions = {};
+
+			selectMatches.forEach(match => {
+				switch (match)
+				{
+					case '[day]':
+						selectOptions[match] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+						break;
+					case '[type]':
+						selectOptions[match] = Object.values(FeatureType);
+						break;
+					default:
+						break;
+				}
+			});
 
 			modalStates.OpenModal({
 				title: "Copy Command",
 				maxWidth: "md",
-				children: <CopyCommandsModalChild command={usage} options={options} mentions={mentions} days={days} />
+				children: <CopyCommandsModalChild command={usage} inputs={matches} selectOptions={selectOptions} />
 			});
 		}
 	}

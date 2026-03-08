@@ -4,46 +4,6 @@ import React from "react";
 import {CopyToClipboard, SelectMenuProps} from "../../Utils";
 import {SnackbarContext} from "../../contexts/SnackbarContext";
 
-const DayValues = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-const InputGrid = (props) => {
-	const { list, OnChange, selectValues } = props;
-
-	return (
-		<>
-			{
-				list.length > 0 &&
-				<Grid container spacing={2}>
-				{
-					list.map((l) => {
-						return (
-							<Grid key={`input-${l}`} item xs>
-								{
-									selectValues !== undefined && selectValues.length > 0 &&
-									<Select fullWidth MenuProps={SelectMenuProps} onChange={OnChange(l)}>
-										{
-											selectValues.map((v) => {
-												return (
-													<MenuItem key={`select-${v}`} value={v}>{v}</MenuItem>
-												)
-											})
-										}
-									</Select>
-								}
-								{
-									(selectValues === undefined || selectValues?.length <= 0) &&
-									<TextInput label={l} variant={"outlined"} onChange={OnChange(l)} fullWidth />
-								}
-							</Grid>
-						)
-					})
-				}
-				</Grid>
-			}
-		</>
-	)
-}
-
 const UpdateValues = (val, setVal, key, value) => {
 	let _values = [...val];
 	let keyVal = _values.find(v => Object.keys(v)[0] === key);
@@ -72,71 +32,96 @@ const FillCommand = (cmd, values) => {
 }
 
 export function CopyCommandsModalChild(props) {
-	const { command, mentions, days, options } = props;
+	const { command, inputs, selectOptions } = props;
 	const snackbarStates = React.useContext(SnackbarContext);
 
 	const [newCommand, setNewCommand] = React.useState(command);
-	const [mentionValues, setMentionValues] = React.useState([]);
-	const [dayValues, setDayValues] = React.useState([]);
-	const [optionValues, setOptionValues] = React.useState([]);
-
-	const OnMentionsChanged = (mention) => (e) => {
-		let { value } = e.target;
-
-		value = value?.length <= 0
-			? mention
-			: `@${value}`;
-
-		UpdateValues(mentionValues, setMentionValues, mention, value);
-	}
-
-	const OnDaysChanged = (day) => (e) => {
-		let { value } = e.target;
-
-		if (value?.length <= 0)
-		{
-			value = day;
-		}
-
-		UpdateValues(dayValues, setDayValues, day, value);
-	}
-
-	const OnOptionsChanged = (option) => (e) => {
-		let { value } = e.target;
-
-		if (value?.length <= 0)
-		{
-			value = option;
-		}
-
-		UpdateValues(optionValues, setOptionValues, option, value);
-	}
-
+	const [valueMappings, setValueMappings] = React.useState({});
+	
 	React.useEffect(() => {
-		let _command = FillCommand(command, mentionValues);
-		_command = FillCommand(_command, dayValues);
-		_command = FillCommand(_command, optionValues);
+		let newCommandText = command;
+		Object.entries(valueMappings).forEach(([k, v]) => {
+			newCommandText = newCommandText.replace(k, v);
+		});
 
-		setNewCommand(_command);
-	}, [mentionValues, dayValues, optionValues]);
+		setNewCommand(newCommandText);
+	}, [valueMappings]);
 
 	const CopyCommand = () => {
 		CopyToClipboard(snackbarStates, newCommand);
 	}
-	
+
+	const OnTextChange = (input, prefix) => (e) => {
+		const { value } = e.target;
+		let newInputText = value.length <= 0 ? input : value;
+
+		if (prefix)
+		{
+			if (!newInputText.startsWith(prefix))
+			{
+				newInputText = prefix + newInputText;
+			}
+		}
+
+		const newValueMappings = {
+			...valueMappings,
+			[input]: newInputText
+		};
+
+		setValueMappings(newValueMappings);
+	}
+
+	const OnSelectChange = (input) => (e) => {
+		const { value } = e.target;
+		const newInputText = value.length <= 0 ? input : value;
+
+		const newValueMappings = {
+			...valueMappings,
+			[input]: newInputText
+		};
+
+		setValueMappings(newValueMappings);
+	}
+
 	return (
-		<>
-			<Stack gap={2}>
-				<InputGrid list={mentions} OnChange={OnMentionsChanged} />
-				<InputGrid list={days} OnChange={OnDaysChanged} selectValues={DayValues} />
-				<InputGrid list={options} OnChange={OnOptionsChanged} />
-				<Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white', fontWeight: 'bold', fontSize: 'large'}}>
-					<span>
-						{newCommand}
-					</span>
-					<Button variant={"contained"} onClick={CopyCommand}>Copy To Clipboard</Button>
-				</Box>
-			</Stack>
-		</>
+		<Stack gap={2}>
+			<Grid container spacing={2}>
+				{
+					inputs.map((i) => 
+						<Grid key={`input-${i}`} item xs>
+							{
+								// Text Input {}
+								i.startsWith('{') &&
+								<TextInput label={i} variant={"outlined"} onChange={OnTextChange(i)} fullWidth />
+							}
+							{
+								// Mentions @
+								i.startsWith('@') &&
+								<TextInput label={i} variant={"outlined"} onChange={OnTextChange(i, '@')} fullWidth />
+							}
+							{
+								// Options []
+								i.startsWith('[') &&
+								<Select fullWidth MenuProps={SelectMenuProps} onChange={OnSelectChange(i)}>
+									{
+										selectOptions[i].map((option) => {
+											return (
+												<MenuItem key={`select-${option}`} value={option}>{option}</MenuItem>
+											)
+										})
+									}
+								</Select>
+							}
+						</Grid>
+					)
+				}
+			</Grid>
+			<Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white', fontWeight: 'bold', fontSize: 'large'}}>
+				<span>
+					{newCommand}
+				</span>
+				<Button variant={"contained"} onClick={CopyCommand}>Copy To Clipboard</Button>
+			</Box>
+		</Stack>
 	)
 }

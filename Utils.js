@@ -37,6 +37,11 @@ export const DataCrudType = {
 	Update: 3
 }
 
+export const FeatureType = {
+	Bot: "SerBot",  
+	Site: "Site",
+}
+
 export const CopyToClipboard = (snackbarStates, text) => {
 	let _msg = "";
 	let _severity = SNACKBAR_SEVERITY_WARNING;
