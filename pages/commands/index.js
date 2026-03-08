@@ -174,7 +174,7 @@ function Commands() {
 								{
 									commandList.map(command => {
 										return (
-											<ImageListItem>
+											<ImageListItem key={`command-card-${command.Title}`}>
 												<CommandCard key={command.Title} command={command} onCopyClicked={OnCopyClicked} />
 											</ImageListItem>
 										)
