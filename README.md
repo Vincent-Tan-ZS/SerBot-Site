@@ -1,3 +1,6 @@
+## v2.7.3.4
+- Command page is now sorted alphabetically by Title by default
+
 ## v2.7.3.3
 - Added sorting predicate to usePagination hook
 - Countdown uses the usePagination hook now

@@ -117,7 +117,10 @@ function Commands() {
 		const newCommandList = (data ?? []).filter((c) => 
 			c.Title?.toLowerCase().includes(filterText.toLowerCase()) || c.List.find(l => l.toLowerCase().includes(filterText.toLowerCase())) !== undefined
 		);
-		setCommandList(newCommandList);
+
+		const sortedList = newCommandList.sort((a, b) => a.Title > b.Title ? 1 : -1);
+
+		setCommandList(sortedList);
 	}, [filterText, data]);
 
 	const OnCopyClicked = (usage) => () => {
